@@ -296,7 +296,7 @@ public static class Extensions
     }
 
     public static AudioPlayer PlayAudio(string fileName, byte volume, bool isLoop, bool isSpatial = false,
-        float minDistance = 5f, float maxDistance = 5000f)
+        float minDistance = 5f, float maxDistance = 5000f, Vector3 speakerPosition = default)
     {
         if (!AudioClipStorage.AudioClips.ContainsKey(fileName))
         {
@@ -308,11 +308,10 @@ public static class Extensions
                 return null;
             }
         }
-
-        var audioPlayer = AudioPlayer.CreateOrGet("AutoEvent-Global",
+        var audioPlayer = AudioPlayer.CreateOrGet($"AutoEvent-Global-{fileName}",
             onIntialCreation: p =>
             {
-                p.AddSpeaker($"AutoEvent-Main-{fileName}", volume * (AutoEvent.Singleton.Config.Volume / 100f),
+                p.AddSpeaker($"AutoEvent-Main-{fileName}", speakerPosition, volume * (AutoEvent.Singleton.Config.Volume / 100f),
                     isSpatial, minDistance, maxDistance);
             });
 

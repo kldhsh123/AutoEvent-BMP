@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using AutoEvent.Games.CounterStrike.Features;
 using CustomPlayerEffects;
 using LabApi.Events.Arguments.PlayerEvents;
@@ -11,11 +12,13 @@ namespace AutoEvent.Games.CounterStrike;
 
 public class EventHandler(Plugin plugin)
 {
-    internal static Bounds BSiteBounds = new();
-    internal static Bounds ASiteBounds = new();
+    internal static Bounds BSiteBounds;
+    internal static Bounds ASiteBounds;
     internal static InteractableToy Button;
     internal static Scp1576Item Bomb;
     private static AudioPlayer _bombAudio;
+    private static AudioPlayer _plantAudio;
+    private static AudioPlayer _defuseAudio;
     
     public void OnSearchedToy(PlayerSearchedToyEventArgs ev)
     {
@@ -36,9 +39,11 @@ public class EventHandler(Plugin plugin)
     {
         ev.Player.DisableEffect<Ensnared>();
         ev.Player.DisableEffect<HeavyFooted>();
+        LogManager.Debug("Player aborted searching the bomb");
+        _defuseAudio?.RemoveAllClips();
     }
 
-    public static void OnSearchingToy(PlayerSearchingToyEventArgs ev)
+    public void OnSearchingToy(PlayerSearchingToyEventArgs ev)
     {
         if (ev.Player.IsChaos)
         {
@@ -48,9 +53,11 @@ public class EventHandler(Plugin plugin)
         
         ev.Player.EnableEffect<Ensnared>(255);
         ev.Player.EnableEffect<HeavyFooted>(255);
+        _defuseAudio = Extensions.PlayAudio("BombDefusing.ogg", 100, false, true, 20, 30, ev.Player.Position);
+
     }
 
-    public static void OnUsingItem(PlayerUsingItemEventArgs ev)
+    public void OnUsingItem(PlayerUsingItemEventArgs ev)
     {
         LogManager.Debug("Player is trying to use an item");
         if (ev.UsableItem.Base == null || Bomb == null || ev.UsableItem.Base.ItemId != Bomb.Base.ItemId) return;
@@ -71,6 +78,16 @@ public class EventHandler(Plugin plugin)
         ev.UsableItem.MaxCancellableDuration = 20f;
         ev.Player.EnableEffect<Ensnared>(255);
         ev.Player.EnableEffect<HeavyFooted>(255);
+        _plantAudio = Extensions.PlayAudio("BombPlanting.ogg", 100, false, true, 20, 30, ev.Player.Position);
+        if (!AudioClipStorage.AudioClips.ContainsKey("TBombWin.ogg"))
+        {
+            var filePath = Path.Combine(AutoEvent.Singleton.Config.MusicDirectoryPath, "TBombWin.ogg");
+            LogManager.Debug($"[PlayAudio] File path: {filePath}");
+            if (!AudioClipStorage.LoadClip(filePath, "TBombWin.ogg"))
+            {
+                LogManager.Debug("[PlayAudio] The music file TBombWin.ogg was not found for playback");
+            }
+        }
     }
 
     public void OnUsedItem(PlayerUsedItemEventArgs ev)
@@ -87,7 +104,7 @@ public class EventHandler(Plugin plugin)
         plugin.BombObject.transform.parent = null;
         plugin.BombObject.transform.ResetTransform();
         plugin.BombObject.transform.position = ev.Player.Position + new Vector3(0f, -1f, -0.75f);
-        _bombAudio = Extensions.PlayAudio("BombPlanted.ogg", 5, false, true, 10, 20);
+        _bombAudio = Extensions.PlayAudio("BombPlanted.ogg", 100, false, true, 20, 50, ev.Player.Position);
         ev.Player.SendHint(plugin.Translation.YouPlanted);
         ev.Player.DisableEffect<Ensnared>();
         ev.Player.DisableEffect<HeavyFooted>();
@@ -101,6 +118,8 @@ public class EventHandler(Plugin plugin)
         Bomb.GlobalCooldownDuration = 0f;
         ev.Player.DisableEffect<Ensnared>();
         ev.Player.DisableEffect<HeavyFooted>();
+        LogManager.Debug("Player cancelled using the bomb");
+        _plantAudio?.RemoveAllClips();
     }
     
     public static void OnSearchingPickup(PlayerSearchingPickupEventArgs ev)
@@ -143,5 +162,10 @@ public class EventHandler(Plugin plugin)
         }
         if (ev.NewItem != null && ev.NewItem.Base.ItemId != Bomb.Base.ItemId) return;
         ev.Player.SendHint(Translation.EquippedBomb);
+    }
+
+    public static void OnCuffing(PlayerCuffingEventArgs ev)
+    {
+        ev.IsAllowed = false;
     }
 }

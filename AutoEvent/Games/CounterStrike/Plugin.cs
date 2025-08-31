@@ -50,30 +50,32 @@ public class Plugin : Event<Config, Translation>, IEventMap, IEventSound
     {
         _eventHandler = new EventHandler(this);
         PlayerEvents.SearchedToy += _eventHandler.OnSearchedToy;
-        PlayerEvents.SearchingToy += EventHandler.OnSearchingToy;
+        PlayerEvents.SearchingToy += _eventHandler.OnSearchingToy;
         PlayerEvents.SearchToyAborted += EventHandler.OnSearchToyAborted;
-        PlayerEvents.UsingItem += EventHandler.OnUsingItem;
+        PlayerEvents.UsingItem += _eventHandler.OnUsingItem;
         PlayerEvents.UsedItem += _eventHandler.OnUsedItem;
         PlayerEvents.PickingUpItem += _eventHandler.OnPickingUpItem;
         PlayerEvents.ChangedItem += EventHandler.OnChangedItemEvent;
         PlayerEvents.CancelledUsingItem += EventHandler.OnCancelledUsingItem;
         PlayerEvents.DroppedItem += _eventHandler.OnDroppedItem;
         PlayerEvents.SearchingPickup += EventHandler.OnSearchingPickup;
+        PlayerEvents.Cuffing += EventHandler.OnCuffing;
         
     }
 
     protected override void UnregisterEvents()
     {
         PlayerEvents.SearchedToy -= _eventHandler.OnSearchedToy;
-        PlayerEvents.UsingItem -= EventHandler.OnUsingItem;
+        PlayerEvents.UsingItem -= _eventHandler.OnUsingItem;
         PlayerEvents.UsedItem -= _eventHandler.OnUsedItem;
         PlayerEvents.PickingUpItem -= _eventHandler.OnPickingUpItem;
         PlayerEvents.CancelledUsingItem -= EventHandler.OnCancelledUsingItem;
         PlayerEvents.ChangedItem -= EventHandler.OnChangedItemEvent;
-        PlayerEvents.SearchingToy += EventHandler.OnSearchingToy;
+        PlayerEvents.SearchingToy += _eventHandler.OnSearchingToy;
         PlayerEvents.SearchToyAborted += EventHandler.OnSearchToyAborted;
         PlayerEvents.DroppedItem -= _eventHandler.OnDroppedItem;
         PlayerEvents.SearchingPickup -= EventHandler.OnSearchingPickup;
+        PlayerEvents.Cuffing -= EventHandler.OnCuffing;
         
         
         _eventHandler = null;
@@ -224,10 +226,12 @@ public class Plugin : Event<Config, Translation>, IEventMap, IEventSound
         string text;
         if (BombState == BombState.Exploded)
         {
-            foreach (var player in Player.ReadyList)
-                if (player.IsAlive)
-                    player.Damage(new ExplosionDamageHandler(new Footprint(Player.Host?.ReferenceHub), Vector3.back,
-                        1000, 100, ExplosionType.Grenade));
+            foreach (var player in Player.ReadyList.Where(p => p.IsAlive))
+            {
+                Extensions.GrenadeSpawn(player.Position, 0.1f, 0.1f, 0);
+                Warhead.Shake();
+                player.Kill(Translation.BombDeathReason);
+            }
 
             text = Translation.PlantedWin;
             Extensions.PlayAudio("TBombWin.ogg", 15, false);
