@@ -1,83 +1,86 @@
-# Problems :trollface: - *How can I fix my problem?*
+# Winter Season Mini-Games
 
-## 1) You do not have permission to use this command:
+### Zombie Infection.
 
-![image](https://github.com/user-attachments/assets/b96bbf64-e981-4f9a-8200-eb1aab1b8014)
+#### Zombie infestation. the goal of which is to infect all players.
 
-- Read here how to set permissions for your
-  role: [(Press me)](https://github.com/MedveMarci/AutoEvent/blob/main/Docs/Installation.md)
+![](https://github.com/MedveMarci/AutoEvent/blob/main/Photos/Zombie_Winter2.png)
+![](https://github.com/MedveMarci/AutoEvent/blob/main/Photos/ZombieRemake_Winter2.png)
 
----
+### Airstrike
 
-## 2) I only have one mini-game. What should I do?
+#### Grenades begin to spawn on the map.
 
-![image](https://github.com/user-attachments/assets/c40ac4d8-7753-4627-bf39-d514d53c3b98)
+#### Survive to win.
 
-- You haven't installed ProjectMER, so you have mini-games that won't need the maps.
-- Install the ProjectMER plugin so that the plugin can load
-  maps: [(Github ProjectMER)](https://github.com/Michal78900/ProjectMER/releases/latest)
+![](https://github.com/MedveMarci/AutoEvent/blob/main/Photos/DeathParty-winter.png)
 
-![image](https://github.com/user-attachments/assets/0ed636a3-9d08-4034-bc28-150a6646186b)
+### SnowBall
 
-- I do not know how to install ProjectMER. What should I do?
+#### Both teams have balls.
 
-![image](https://github.com/user-attachments/assets/6f292d36-b87c-4ab6-aa49-899e4480ea2b)
+#### Your task is to kill the opposite team, the team that stays alive wins.
 
-## 3) ProjectMER was not detected. AutoEvent will not be loaded until you install ProjectMER.
+![](https://github.com/MedveMarci/AutoEvent/blob/main/Photos/Snowball-winter.png)
 
-- This is the same problem as in point 2.
-- Install ProjectMER so that the plugin can load
-  maps: [(Github ProjectMER)](https://github.com/Michal78900/ProjectMER/releases/latest)
+### Lava
 
-![image](https://github.com/user-attachments/assets/b0355d75-31bc-43b8-980d-11d39e8bcc1c)
----
+#### The lava begins to rise, climb one of the towers to confront other players.
 
-![image](https://github.com/user-attachments/assets/e66573f4-1899-43a7-9724-01d3c9cd97ec)
+#### Weapons will be scattered around the map.
 
-- It says what it means. You have an old version of ProjectMER. There are new features or a new version of SCP has
-  been released. Therefore, errors appear.
-- Install the new version of ProjectMER so that the plugin can load
-  schematics: [(Github ProjectMER)](https://github.com/Michal78900/ProjectMER/releases/latest)
+![](https://github.com/MedveMarci/AutoEvent/blob/main/Photos/Lava-winter.png)
 
-![image](https://github.com/user-attachments/assets/b0355d75-31bc-43b8-980d-11d39e8bcc1c)
+### Tag
 
----
+#### Run and hide from the players, otherwise you yourself will become caught up.
 
-## 5) You need to download the map (something) to run this mini-game.
+#### To survive, pass the bat to another player.
 
-![image](https://github.com/user-attachments/assets/1a71fb4f-08b3-4411-a693-25ac9aae26f6)
+![](https://github.com/MedveMarci/AutoEvent/blob/main/Photos/Tag-winter.png)
 
-![image](https://github.com/user-attachments/assets/469eab25-2f94-4414-87dc-7402a5068aaf)
+### Red Light Green Light
 
-- Unzip *``Schematics.tar.gz``* to ``LabApi/configs/AutoEvent/Schematics`` folder.
+#### Red light, Green light. the goal is to run behind Santa Claus, who will simultaneously turn around and watch so that you don’t move.
 
-![image](https://github.com/user-attachments/assets/1797ee0b-ed3d-42a5-9fea-546bdf8bca12)
+#### When Santa Claus is looking at you you can’t walk, when he’s not looking at you you can.
 
----
+![](https://github.com/MedveMarci/AutoEvent/blob/main/Photos/GreenLightWinterLight.png)
 
-## 7) The mini-game (something) is not found:
+### Knives
 
-![image](https://github.com/user-attachments/assets/7c828cec-1c5c-4f50-a4d1-9e22ebd961e7)
+#### Knife fight between two teams.
 
-![image](https://github.com/user-attachments/assets/a25398ca-15d1-452f-b555-7a4ad5522db1)
+#### It's simple! the team that stays alive wins.
 
-- Find the name of the command in square brackets:
+![](https://github.com/MedveMarci/AutoEvent/blob/main/Photos/Knives-winter.png)
 
-![image](https://github.com/user-attachments/assets/432b6513-ca13-496c-858a-95a7b2b90866)
+### Musical Chairs
 
-![image](https://github.com/user-attachments/assets/fff98a27-b4ac-47e4-8610-a05c3f0f40a6)
----- 
+#### Move to the music and don't stop.
 
-## Enabling Debug Mode (debug-output.log):
+![](https://github.com/MedveMarci/AutoEvent/blob/main/Photos/MusicalChair-winter.png)
 
-Autoevent has 2 methods of logging debug outputs. By default neither modes of logging are on. They can be enabled with
-their respective config options.
+### Fall Down
 
-- Method 1 - Console logging (`debug`):
-    - Console logging logs all errors to the console directly.
-- Method 2 - Debug File Logging (`auto_log_debug`):
-    - Debug file logging stores all errors to a debug file in the base autoevent directory.
-        - For LabApi: `~/.config/SCP Secret Laboratory/LabApi/configs/AutoEvent/debug-output.log`
+#### The map is destroyed. Survive on the remaining blocks.
+
+#### The last player standing is the winner.
+
+![](https://github.com/MedveMarci/AutoEvent/blob/main/Photos/FallDown-winter.png)
+
+### Versus
+
+#### Players are divided into teams. in the center of the map there is a room in which the competition will take place.
+
+#### To take part you need to go through the door.
+
+![](https://github.com/MedveMarci/AutoEvent/blob/main/Photos/Versus-winter.png)
+
+### Glass
+
+#### Select the correct panel to reach the finish line.
+
 ![](https://github.com/MedveMarci/AutoEvent/blob/main/Photos/Glass-winter.png)
 
 ### Puzzle
