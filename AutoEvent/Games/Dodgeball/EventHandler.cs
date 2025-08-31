@@ -1,7 +1,6 @@
 ﻿using AutoEvent.Events.EventArgs;
 using LabApi.Events.Arguments.PlayerEvents;
 using LabApi.Features.Wrappers;
-using PlayerStatsSystem;
 using UnityEngine;
 
 namespace AutoEvent.Games.Dodgeball;

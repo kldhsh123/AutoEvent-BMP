@@ -43,12 +43,12 @@ public class EventHandler(Plugin plugin)
         var pos = plugin.SpawnList.RandomItem().transform.position;
         Timing.CallDelayed(0.1f, () => player.Position = pos);
     }
-    
+
     public static void OnPlacingBlood(PlayerPlacingBloodEventArgs ev)
     {
         ev.IsAllowed = false;
     }
-    
+
     public static void OnCuffing(PlayerCuffingEventArgs ev)
     {
         ev.IsAllowed = false;

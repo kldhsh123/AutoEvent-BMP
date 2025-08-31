@@ -138,10 +138,7 @@ public class Plugin : Event<Config, Translation>, IEventSound, IEventMap
             return;
 
         // Reset the parameters in the dictionary
-        foreach (var value in PlayerDict.Values)
-        {
-            value.IsStandUpPlatform = false;
-        }
+        foreach (var value in PlayerDict.Values) value.IsStandUpPlatform = false;
 
         _countdown = new TimeSpan(0, 0, Random.Range(2, 10));
         _eventState++;
@@ -240,13 +237,10 @@ public class Plugin : Event<Config, Translation>, IEventSound, IEventMap
 
         if (_countdown.TotalSeconds > 0)
             return;
-        foreach (var player in Player.ReadyList.Where(p => p.IsAlive))
-        {
-            player.DisableEffect<Ensnared>();
-        }
+        foreach (var player in Player.ReadyList.Where(p => p.IsAlive)) player.DisableEffect<Ensnared>();
         foreach (var platform in Platforms)
             platform.GetComponent<PrimitiveObjectToy>().NetworkMaterialColor = Color.yellow;
-        
+
         Extensions.ResumeAudio(SoundInfo.AudioPlayer);
         _countdown = new TimeSpan(0, 0, 3);
         _eventState = 0;

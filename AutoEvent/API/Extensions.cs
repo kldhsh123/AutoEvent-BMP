@@ -214,12 +214,12 @@ public static class Extensions
         try
         {
             Mero.TrySetIsDynamiclyDisabled(true);
-            
+
             var schematicObject = ObjectSpawner.SpawnSchematic(schematicName, pos, rot, scale);
 
             foreach (var toyBase in schematicObject.AdminToyBases)
                 toyBase.syncInterval = 0;
-            
+
             Mero.TrySetIsDynamiclyDisabled(false);
             return new MapObject
             {
@@ -290,7 +290,7 @@ public static class Extensions
         timeGrenade.gameObject.transform.localScale = new Vector3(scale, scale, scale);
         NetworkServer.Spawn(timeGrenade.gameObject);
         timeGrenade.ServerActivate();
-        var grenadeProjectile = (ExplosiveGrenadeProjectile) Pickup.Get(timeGrenade);
+        var grenadeProjectile = (ExplosiveGrenadeProjectile)Pickup.Get(timeGrenade);
         grenadeProjectile.RemainingTime = fuseTime;
         grenadeProjectile.MaxRadius = radius;
     }
@@ -308,10 +308,12 @@ public static class Extensions
                 return null;
             }
         }
+
         var audioPlayer = AudioPlayer.CreateOrGet($"AutoEvent-Global-{fileName}",
             onIntialCreation: p =>
             {
-                p.AddSpeaker($"AutoEvent-Main-{fileName}", speakerPosition, volume * (AutoEvent.Singleton.Config.Volume / 100f),
+                p.AddSpeaker($"AutoEvent-Main-{fileName}", speakerPosition,
+                    volume * (AutoEvent.Singleton.Config.Volume / 100f),
                     isSpatial, minDistance, maxDistance);
             });
 

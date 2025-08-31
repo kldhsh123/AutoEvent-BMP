@@ -177,19 +177,21 @@ public class Plugin : Event<Config, Translation>, IEventSound, IEventMap
             foreach (var colorIndicator in _colorIndicators)
                 colorIndicator.GetComponent<PrimitiveObjectToy>().NetworkMaterialColor = Color.green;
         }
-        
+
         else
         {
             var selectedColor = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f), 1f);
-            
+
             foreach (var colorIndicator in _colorIndicators)
                 colorIndicator.GetComponent<PrimitiveObjectToy>().NetworkMaterialColor = selectedColor;
-            
+
             foreach (var platform in _platforms)
                 platform.GetComponent<PrimitiveObjectToy>().NetworkMaterialColor =
-                    _fallingPlatforms.Contains(platform) ? new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f), 1f) : selectedColor;
+                    _fallingPlatforms.Contains(platform)
+                        ? new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f), 1f)
+                        : selectedColor;
         }
-        
+
 
         FrameDelayInSeconds = 1;
         _countdown = TimeSpan.FromSeconds(_fallDelay);

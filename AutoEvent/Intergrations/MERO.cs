@@ -3,51 +3,50 @@ using System.Linq;
 using System.Reflection;
 using LabApi.Loader;
 
-namespace AutoEvent.Intergrations
+namespace AutoEvent.Intergrations;
+
+internal static class Mero
 {
-    internal static class Mero
+    private static Assembly Assembly => PluginLoader.Plugins.FirstOrDefault(p => p.Key.Name is "MEROptimizer").Value;
+
+    private static Type OptimizerType => Assembly?.GetType("MEROptimizer.Application.MEROptimizer");
+
+    public static bool Available => OptimizerType is not null;
+
+    internal static void TrySetIsDynamiclyDisabled(bool value)
     {
-        private static Assembly Assembly => PluginLoader.Plugins.FirstOrDefault(p => p.Key.Name is "MEROptimizer").Value;
-
-        private static Type OptimizerType => Assembly?.GetType("MEROptimizer.Application.MEROptimizer");
-
-        public static bool Available => OptimizerType is not null;
-
-        internal static void TrySetIsDynamiclyDisabled(bool value)
+        LogManager.Debug("Attempting to set MEROptimizer.isDynamiclyDisabled...");
+        if (!Available)
         {
-            LogManager.Debug("Attempting to set MEROptimizer.isDynamiclyDisabled...");
-            if (!Available)
+            LogManager.Debug("MEROptimizer not found.");
+            return;
+        }
+
+        try
+        {
+            var field = OptimizerType!.GetField("isDynamiclyDisabled",
+                BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy);
+            if (field is not null && field.FieldType == typeof(bool))
             {
-                LogManager.Debug("MEROptimizer not found.");
+                field.SetValue(null, value);
+                LogManager.Debug($"MEROptimizer.isDynamiclyDisabled set to {value} via field.");
                 return;
             }
 
-            try
+            var prop = OptimizerType.GetProperty("isDynamiclyDisabled",
+                BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase);
+            if (prop is not null && prop.PropertyType == typeof(bool) && prop.CanWrite)
             {
-                var field = OptimizerType!.GetField("isDynamiclyDisabled", BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy);
-                if (field is not null && field.FieldType == typeof(bool))
-                {
-                    field.SetValue(null, value);
-                    LogManager.Debug($"MEROptimizer.isDynamiclyDisabled set to {value} via field.");
-                    return;
-                }
-
-                var prop = OptimizerType.GetProperty("isDynamiclyDisabled", BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase);
-                if (prop is not null && prop.PropertyType == typeof(bool) && prop.CanWrite)
-                {
-                    prop.SetValue(null, value);
-                    LogManager.Debug($"MEROptimizer.isDynamiclyDisabled set to {value} via property.");
-                    return;
-                }
-
-                LogManager.Debug("MEROptimizer.isDynamiclyDisabled member not found or not writable.");
+                prop.SetValue(null, value);
+                LogManager.Debug($"MEROptimizer.isDynamiclyDisabled set to {value} via property.");
                 return;
             }
-            catch (Exception e)
-            {
-                LogManager.Debug($"Failed to set MEROptimizer.isDynamiclyDisabled: {e.Message}\n{e.HResult}");
-                return;
-            }
+
+            LogManager.Debug("MEROptimizer.isDynamiclyDisabled member not found or not writable.");
+        }
+        catch (Exception e)
+        {
+            LogManager.Debug($"Failed to set MEROptimizer.isDynamiclyDisabled: {e.Message}\n{e.HResult}");
         }
     }
 }

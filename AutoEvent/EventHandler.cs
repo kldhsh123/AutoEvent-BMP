@@ -116,7 +116,8 @@ internal class EventHandler : CustomEventsHandler
         if (AutoEvent.EventManager.CurrentEvent is null)
             return;
 
-        LogManager.Debug($"Player {ev.Player.Nickname} ({ev.Player.UserId}, {ev.Player.NetworkId}) died. Cleaning up event data.");
+        LogManager.Debug(
+            $"Player {ev.Player.Nickname} ({ev.Player.UserId}, {ev.Player.NetworkId}) died. Cleaning up event data.");
         Extensions.InfinityStaminaList.Remove(ev.Player.NetworkId);
         ev.Player.GiveInfiniteAmmo(AmmoMode.None);
         base.OnPlayerDeath(ev);
@@ -131,14 +132,11 @@ internal class EventHandler : CustomEventsHandler
             base.OnPlayerChangedSpectator(ev);
             return;
         }
+
         if (ev.NewTarget.TryGetEffect<FogControl>(out var effect))
-        {
             ev.Player.EnableEffect<FogControl>(effect.Intensity);
-        }
         else
-        {
             ev.Player.DisableEffect<FogControl>();
-        }
         base.OnPlayerChangedSpectator(ev);
     }
 
@@ -153,6 +151,7 @@ internal class EventHandler : CustomEventsHandler
         {
             LogManager.Error($"Version check could not be started.\n{ex}");
         }
+
         base.OnServerWaitingForPlayers();
     }
 }

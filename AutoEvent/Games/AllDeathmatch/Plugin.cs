@@ -12,7 +12,6 @@ using MEC;
 using Mirror;
 using UnityEngine;
 using Extensions = AutoEvent.API.Extensions;
-using Object = UnityEngine.Object;
 
 namespace AutoEvent.Games.AllDeathmatch;
 
@@ -83,7 +82,10 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap, IEventSound
             switch (gameObject.name)
             {
                 case "Spawnpoint_Deathmatch": SpawnList.Add(gameObject); break;
-                case "Wall": NetworkServer.Destroy(gameObject);; break;
+                case "Wall":
+                    NetworkServer.Destroy(gameObject);
+                    ;
+                    break;
             }
 
         foreach (var player in Player.ReadyList)

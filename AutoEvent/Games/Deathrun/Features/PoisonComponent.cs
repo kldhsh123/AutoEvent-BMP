@@ -1,4 +1,3 @@
-using AutoEvent.API;
 using CustomPlayerEffects;
 using UnityEngine;
 using Player = LabApi.Features.Wrappers.Player;

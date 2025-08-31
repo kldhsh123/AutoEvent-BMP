@@ -6,13 +6,11 @@ using AutoEvent.API;
 using AutoEvent.API.Enums;
 using AutoEvent.Games.CounterStrike.Features;
 using AutoEvent.Interfaces;
-using Footprinting;
 using LabApi.Events.Handlers;
 using LabApi.Features.Wrappers;
 using MEC;
 using Mirror;
 using PlayerRoles;
-using PlayerStatsSystem;
 using UnityEngine;
 using Extensions = AutoEvent.API.Extensions;
 using Object = UnityEngine.Object;
@@ -60,7 +58,6 @@ public class Plugin : Event<Config, Translation>, IEventMap, IEventSound
         PlayerEvents.DroppedItem += _eventHandler.OnDroppedItem;
         PlayerEvents.SearchingPickup += EventHandler.OnSearchingPickup;
         PlayerEvents.Cuffing += EventHandler.OnCuffing;
-        
     }
 
     protected override void UnregisterEvents()
@@ -76,8 +73,8 @@ public class Plugin : Event<Config, Translation>, IEventMap, IEventSound
         PlayerEvents.DroppedItem -= _eventHandler.OnDroppedItem;
         PlayerEvents.SearchingPickup -= EventHandler.OnSearchingPickup;
         PlayerEvents.Cuffing -= EventHandler.OnCuffing;
-        
-        
+
+
         _eventHandler = null;
     }
 
@@ -130,7 +127,7 @@ public class Plugin : Event<Config, Translation>, IEventMap, IEventSound
                                   new Vector3(Random.Range(-2f, 2f), 0, Random.Range(-2f, 2f));
                 if (EventHandler.Bomb == null)
                 {
-                    EventHandler.Bomb = (LabApi.Features.Wrappers.Scp1576Item)player.AddItem(ItemType.SCP1576);
+                    EventHandler.Bomb = (Scp1576Item)player.AddItem(ItemType.SCP1576);
                     player.SendHint(Translation.PickedUpBomb);
                     BombObject.gameObject.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
                     BombObject.gameObject.transform.parent = player.GameObject.transform;

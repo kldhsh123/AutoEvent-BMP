@@ -113,6 +113,7 @@ public class Plugin : Event<Config, Translation>, IEventSound
             door.NetworkTargetState = true;
             door.ServerChangeLock(DoorLockReason.Warhead, true);
         }
+
         Warhead.Stop();
     }
 }

@@ -13,7 +13,6 @@ using Extensions = AutoEvent.API.Extensions;
 
 namespace AutoEvent.Games.Battle;
 
-
 //todo: fix workstations
 public class Plugin : Event<Configs.Config, Translation>, IEventMap, IEventSound
 {
@@ -88,7 +87,7 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap, IEventSound
                 {
                     NetworkServer.Destroy(gameObject);
                     break;
-                } 
+                }
             }
     }
 
