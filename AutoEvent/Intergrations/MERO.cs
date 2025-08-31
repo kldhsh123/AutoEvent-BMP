@@ -16,8 +16,6 @@ namespace AutoEvent.Intergrations
         internal static void TrySetIsDynamiclyDisabled(bool value)
         {
             LogManager.Debug("Attempting to set MEROptimizer.isDynamiclyDisabled...");
-            LogManager.Debug(Assembly.FullName);
-            LogManager.Debug(Assembly.GetType("MEROptimizer.Application.MEROptimizer").FullName);
             if (!Available)
             {
                 LogManager.Debug("MEROptimizer not found.");
