@@ -13,7 +13,6 @@ using LabApi.Features.Wrappers;
 using Mirror;
 using PlayerRoles;
 using PlayerRoles.Ragdolls;
-using PlayerStatsSystem;
 using ProjectMER.Features;
 using ProjectMER.Features.Serializable;
 using UnityEngine;
@@ -143,7 +142,7 @@ public static class Extensions
 
         if (!flags.HasFlag(LoadoutFlags.IgnoreStamina) && loadout.Stamina != 0)
         {
-            player.ReferenceHub.playerStats.GetModule<StaminaStat>().ModifyAmount(loadout.Stamina);
+            player.StaminaRemaining = loadout.Stamina;
         }
         else
         {
@@ -290,10 +289,10 @@ public static class Extensions
         timeGrenade.PreviousOwner = new Footprint(Player.Host?.ReferenceHub);
         timeGrenade.gameObject.transform.localScale = new Vector3(scale, scale, scale);
         NetworkServer.Spawn(timeGrenade.gameObject);
-        var grenadeProjectile = (ExplosiveGrenadeProjectile)Pickup.Get(timeGrenade);
+        timeGrenade.ServerActivate();
+        var grenadeProjectile = (ExplosiveGrenadeProjectile) Pickup.Get(timeGrenade);
         grenadeProjectile.RemainingTime = fuseTime;
         grenadeProjectile.MaxRadius = radius;
-        timeGrenade.ServerActivate();
     }
 
     public static AudioPlayer PlayAudio(string fileName, byte volume, bool isLoop, bool isSpatial = false,
