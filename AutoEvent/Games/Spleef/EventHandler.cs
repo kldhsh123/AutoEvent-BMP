@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using InventorySystem.Items.Firearms.Modules;
+﻿using InventorySystem.Items.Firearms.Modules;
 using LabApi.Events.Arguments.PlayerEvents;
 using UnityEngine;
 
