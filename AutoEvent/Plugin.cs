@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 using AutoEvent.API;
 using AutoEvent.Loader;
@@ -11,7 +12,6 @@ using LabApi.Features;
 using LabApi.Features.Wrappers;
 using LabApi.Loader.Features.Paths;
 using LabApi.Loader.Features.Plugins;
-using Newtonsoft.Json.Linq;
 
 namespace AutoEvent;
 
@@ -71,11 +71,6 @@ public class AutoEvent : Plugin<Config>
                 CreateDirectoryIfNotExists(BaseConfigPath);
                 CreateDirectoryIfNotExists(Config.SchematicsDirectoryPath);
                 CreateDirectoryIfNotExists(Config.MusicDirectoryPath);
-
-                // temporarily
-                DeleteDirectoryAndFiles(Path.Combine(BaseConfigPath, "Configs"));
-                DeleteDirectoryAndFiles(Path.Combine(BaseConfigPath, "Events"));
-                DeleteDirectoryAndFiles(Path.Combine(Path.Combine(BaseConfigPath, "Schematics"), "All Source maps"));
             }
             catch (Exception e)
             {
@@ -145,36 +140,60 @@ public class AutoEvent : Plugin<Config>
             var allReleasesJson = await client
                 .GetStringAsync($"https://api.github.com/repos/{repo}/releases?per_page=20").ConfigureAwait(false);
 
-            var latestStable = JObject.Parse(latestStableJson);
-            var all = JArray.Parse(allReleasesJson);
+            using var latestStableDoc = JsonDocument.Parse(latestStableJson);
+            using var allReleasesDoc = JsonDocument.Parse(allReleasesJson);
 
-            var stableTag = latestStable.Value<string>("tag_name");
+            var latestStableRoot = latestStableDoc.RootElement;
+            string stableTag = null;
+            if (latestStableRoot.TryGetProperty("tag_name", out var tagProp))
+                stableTag = tagProp.GetString();
             var stableVer = ParseVersion(stableTag);
 
-            JObject latestPre = null;
+            JsonElement? latestPre = null;
             Version preVer = null;
             string preTag = null;
 
-            foreach (var rel in all)
+            if (allReleasesDoc.RootElement.ValueKind == JsonValueKind.Array)
             {
-                if (rel.Value<bool>("draft")) continue;
-                if (!rel.Value<bool>("prerelease")) continue;
-                if (latestPre == null)
+                DateTime? bestPublishedAt = null;
+                foreach (var rel in allReleasesDoc.RootElement.EnumerateArray())
                 {
-                    latestPre = (JObject)rel;
-                }
-                else
-                {
-                    var currPub = rel.Value<DateTime?>("published_at");
-                    var bestPub = latestPre.Value<DateTime?>("published_at");
-                    if (currPub.HasValue && bestPub.HasValue && currPub.Value > bestPub.Value)
-                        latestPre = (JObject)rel;
+                    if (rel.ValueKind != JsonValueKind.Object) continue;
+
+                    bool draft = rel.TryGetProperty("draft", out var draftProp) && draftProp.ValueKind == JsonValueKind.True;
+                    if (draft) continue;
+
+                    bool prerelease = rel.TryGetProperty("prerelease", out var preProp) && preProp.ValueKind == JsonValueKind.True;
+                    if (!prerelease) continue;
+
+                    DateTime? publishedAt = null;
+                    if (rel.TryGetProperty("published_at", out var pubProp))
+                    {
+                        var s = pubProp.GetString();
+                        if (!string.IsNullOrWhiteSpace(s) && DateTime.TryParse(s, out var dt))
+                            publishedAt = dt;
+                    }
+
+                    if (latestPre == null)
+                    {
+                        latestPre = rel;
+                        bestPublishedAt = publishedAt;
+                    }
+                    else
+                    {
+                        if (publishedAt.HasValue && (!bestPublishedAt.HasValue || publishedAt.Value > bestPublishedAt.Value))
+                        {
+                            latestPre = rel;
+                            bestPublishedAt = publishedAt;
+                        }
+                    }
                 }
             }
 
-            if (latestPre != null)
+            if (latestPre.HasValue)
             {
-                preTag = latestPre.Value<string>("tag_name");
+                if (latestPre.Value.TryGetProperty("tag_name", out var preTagProp))
+                    preTag = preTagProp.GetString();
                 preVer = ParseVersion(preTag);
             }
 
