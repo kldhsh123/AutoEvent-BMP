@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using LabApi.Features.Console;
-using System.Timers;
-using AutoEvent.Interfaces;
 
 namespace AutoEvent;
 

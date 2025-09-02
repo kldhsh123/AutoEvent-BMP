@@ -84,7 +84,6 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap, IEventSound
                 case "Spawnpoint_Deathmatch": SpawnList.Add(gameObject); break;
                 case "Wall":
                     NetworkServer.Destroy(gameObject);
-                    ;
                     break;
             }
 

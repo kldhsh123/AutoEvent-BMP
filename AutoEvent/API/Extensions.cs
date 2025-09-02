@@ -6,7 +6,6 @@ using AutoEvent.API.Enums;
 using AutoEvent.Intergrations;
 using Footprinting;
 using InventorySystem;
-using InventorySystem.Items;
 using InventorySystem.Items.Pickups;
 using InventorySystem.Items.ThrowableProjectiles;
 using LabApi.Features.Wrappers;
