@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 using AutoEvent.API;
 using AutoEvent.Loader;
@@ -11,7 +12,6 @@ using LabApi.Features;
 using LabApi.Features.Wrappers;
 using LabApi.Loader.Features.Paths;
 using LabApi.Loader.Features.Plugins;
-using Newtonsoft.Json.Linq;
 
 namespace AutoEvent;
 
@@ -30,7 +30,7 @@ public class AutoEvent : Plugin<Config>
     public override string Description =>
         "A plugin that allows you to play mini-games in SCP:SL. It includes a variety of games such as Spleef, Lava, Hide and Seek, Knives, and more. Each game has its own unique mechanics and rules, providing a fun and engaging experience for players.";
 
-    public override Version Version => new(9, 14, 2);
+    public override Version Version => new(9, 14, 3);
     public override Version RequiredApiVersion => new(LabApiProperties.CompiledVersion);
 
     public static string BaseConfigPath { get; private set; }
@@ -71,11 +71,6 @@ public class AutoEvent : Plugin<Config>
                 CreateDirectoryIfNotExists(BaseConfigPath);
                 CreateDirectoryIfNotExists(Config.SchematicsDirectoryPath);
                 CreateDirectoryIfNotExists(Config.MusicDirectoryPath);
-
-                // temporarily
-                DeleteDirectoryAndFiles(Path.Combine(BaseConfigPath, "Configs"));
-                DeleteDirectoryAndFiles(Path.Combine(BaseConfigPath, "Events"));
-                DeleteDirectoryAndFiles(Path.Combine(Path.Combine(BaseConfigPath, "Schematics"), "All Source maps"));
             }
             catch (Exception e)
             {
@@ -136,45 +131,61 @@ public class AutoEvent : Plugin<Config>
             ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
 
             using var client = new HttpClient();
-            client.DefaultRequestHeaders.UserAgent.ParseAdd($"AutoEvent/{currentVersion}");
+            client.DefaultRequestHeaders.UserAgent.ParseAdd($"{Singleton.Name}/{currentVersion}");
             client.DefaultRequestHeaders.Accept.ParseAdd("application/vnd.github+json");
 
-            const string repo = "MedveMarci/AutoEvent";
+            var repo = $"MedveMarci/{Singleton.Name}";
             var latestStableJson = await client.GetStringAsync($"https://api.github.com/repos/{repo}/releases/latest")
                 .ConfigureAwait(false);
             var allReleasesJson = await client
                 .GetStringAsync($"https://api.github.com/repos/{repo}/releases?per_page=20").ConfigureAwait(false);
 
-            var latestStable = JObject.Parse(latestStableJson);
-            var all = JArray.Parse(allReleasesJson);
+            using var latestStableDoc = JsonDocument.Parse(latestStableJson);
+            using var allReleasesDoc = JsonDocument.Parse(allReleasesJson);
 
-            var stableTag = latestStable.Value<string>("tag_name");
+            var latestStableRoot = latestStableDoc.RootElement;
+            string stableTag = null;
+            if (latestStableRoot.TryGetProperty("tag_name", out var tagProp))
+                stableTag = tagProp.GetString();
             var stableVer = ParseVersion(stableTag);
 
-            JObject latestPre = null;
+            JsonElement? latestPre = null;
             Version preVer = null;
             string preTag = null;
 
-            foreach (var rel in all)
+            if (allReleasesDoc.RootElement.ValueKind == JsonValueKind.Array)
             {
-                if (rel.Value<bool>("draft")) continue;
-                if (!rel.Value<bool>("prerelease")) continue;
-                if (latestPre == null)
+                DateTime? bestPublishedAt = null;
+                foreach (var rel in allReleasesDoc.RootElement.EnumerateArray())
                 {
-                    latestPre = (JObject)rel;
-                }
-                else
-                {
-                    var currPub = rel.Value<DateTime?>("published_at");
-                    var bestPub = latestPre.Value<DateTime?>("published_at");
-                    if (currPub.HasValue && bestPub.HasValue && currPub.Value > bestPub.Value)
-                        latestPre = (JObject)rel;
+                    if (rel.ValueKind != JsonValueKind.Object) continue;
+
+                    bool draft = rel.TryGetProperty("draft", out var draftProp) && draftProp.ValueKind == JsonValueKind.True;
+                    if (draft) continue;
+
+                    bool prerelease = rel.TryGetProperty("prerelease", out var preProp) && preProp.ValueKind == JsonValueKind.True;
+                    if (!prerelease) continue;
+
+                    DateTime? publishedAt = null;
+                    if (rel.TryGetProperty("published_at", out var pubProp))
+                    {
+                        var s = pubProp.GetString();
+                        if (!string.IsNullOrWhiteSpace(s) && DateTime.TryParse(s, out var dt))
+                            publishedAt = dt;
+                    }
+
+                    if (latestPre == null || publishedAt.HasValue && (!bestPublishedAt.HasValue || publishedAt.Value > bestPublishedAt.Value))
+                    {
+                        latestPre = rel;
+                        bestPublishedAt = publishedAt;
+                    }
                 }
             }
 
-            if (latestPre != null)
+            if (latestPre.HasValue)
             {
-                preTag = latestPre.Value<string>("tag_name");
+                if (latestPre.Value.TryGetProperty("tag_name", out var preTagProp))
+                    preTag = preTagProp.GetString();
                 preVer = ParseVersion(preTag);
             }
 
@@ -183,14 +194,14 @@ public class AutoEvent : Plugin<Config>
 
             if (outdatedStable)
                 LogManager.Info(
-                    $"A new AutoEvent version is available: {stableTag} (current {currentVersion}). Download: https://github.com/MedveMarci/AutoEvent/releases/latest",
+                    $"A new {Singleton.Name} version is available: {stableTag} (current {currentVersion}). Download: https://github.com/MedveMarci/{Singleton.Name}/releases/latest",
                     ConsoleColor.DarkRed);
             else if (prereleaseNewer)
                 LogManager.Info(
-                    $"A newer pre-release is available: {preTag} (current {currentVersion}). Download: https://github.com/MedveMarci/AutoEvent/releases/tag/{preTag}",
+                    $"A newer pre-release is available: {preTag} (current {currentVersion}). Download: https://github.com/MedveMarci/{Singleton.Name}/releases/tag/{preTag}",
                     ConsoleColor.DarkYellow);
             else
-                LogManager.Info($"AutoEvent v{currentVersion} is up to date.", ConsoleColor.Blue);
+                LogManager.Info($"Thanks for using {Singleton.Name} v{currentVersion}. To get support and latest news, join to my Discord Server: https://discord.gg/KmpA8cfaSA", ConsoleColor.Blue);
             if (PreRelease)
                 LogManager.Info(
                     "This is a pre-release version. There might be bugs, if you find one, please report it on GitHub or Discord.",
@@ -198,7 +209,7 @@ public class AutoEvent : Plugin<Config>
         }
         catch (Exception e)
         {
-            LogManager.Debug($"Version check failed.\n{e}");
+            LogManager.Error($"Version check failed.\n{e}");
         }
     }
 

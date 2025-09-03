@@ -2,7 +2,6 @@
     <Costura>
         <IncludeAssemblies>
             AudioPlayerApi
-            Newtonsoft.Json
             0Harmony
             NVorbis
             System.Memory
