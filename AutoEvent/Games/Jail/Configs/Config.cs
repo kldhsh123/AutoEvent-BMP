@@ -29,7 +29,8 @@ public class Config : EventConfig
             Effects =
             [
                 new EffectData { Type = nameof(FogControl), Duration = 0, Intensity = 1 }
-            ]
+            ],
+            InfiniteAmmo = AmmoMode.InfiniteAmmo
         }
     ];
 

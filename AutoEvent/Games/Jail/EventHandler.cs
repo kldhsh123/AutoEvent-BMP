@@ -3,24 +3,32 @@ using System.Collections.Generic;
 using System.Linq;
 using AutoEvent.API;
 using AutoEvent.API.Enums;
+using AutoEvent.Games.Spleef;
+using InventorySystem.Items.Firearms.Modules;
 using LabApi.Events.Arguments.PlayerEvents;
 using LabApi.Features.Wrappers;
+using MEC;
 using UnityEngine;
 using Utils.NonAllocLINQ;
+using Object = UnityEngine.Object;
 
 namespace AutoEvent.Games.Jail;
 
 public class EventHandler(Plugin plugin)
 {
-    public void OnShooting(PlayerShootingWeaponEventArgs ev)
+    public void OnShot(PlayerShotWeaponEventArgs ev)
     {
-        if (!Physics.Raycast(ev.Player.Camera.position, ev.Player.Camera.forward, out var raycastHit, 100f, 1 << 0))
+        if (!ev.FirearmItem.Base.TryGetModule<HitscanHitregModuleBase>(out var hitreg))
             return;
-
-        if (!(Vector3.Distance(raycastHit.transform.gameObject.transform.position, plugin.Button.transform.position) <
-              3)) return;
-        ev.Player.SendHitMarker(2f);
-        plugin.PrisonerDoors.GetComponent<JailerComponent>().ToggleDoor();
+        
+        foreach (var obstacle in hitreg.ResultNonAlloc.Obstacles)
+        {
+            
+            if (obstacle.Hit.collider.gameObject != plugin.Button) continue;
+            if (!plugin.PrisonerDoors.TryGetComponent<JailerComponent>(out var jailerComponent)) continue;
+            ev.Player.SendHitMarker(2f);
+            jailerComponent.ToggleDoor();
+        }
     }
 
     public void OnDying(PlayerDyingEventArgs ev)
@@ -43,8 +51,12 @@ public class EventHandler(Plugin plugin)
         var livesRemaining = plugin.Config.PrisonerLives = plugin.Deaths[ev.Player];
         ev.Player.SendHint(plugin.Translation.LivesRemaining.Replace("{lives}", livesRemaining.ToString()), 4f);
         ev.Player.GiveLoadout(plugin.Config.PrisonerLoadouts);
-        ev.Player.Position = plugin.SpawnPoints.Where(r => r.name == "Spawnpoint").ToList().RandomItem().transform
-            .position;
+        Timing.CallDelayed(Timing.WaitForOneFrame, () =>
+        {
+            ev.Player.Position = plugin.SpawnPoints.Where(r => r.name == "Spawnpoint").ToList().RandomItem()
+                .transform
+                .position;
+        });
     }
 
     public void OnInteractingLocker(PlayerInteractingLockerEventArgs ev)

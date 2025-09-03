@@ -42,14 +42,14 @@ public class Plugin : Event<Config, Translation>, IEventMap
     protected override void RegisterEvents()
     {
         _eventHandler = new EventHandler(this);
-        PlayerEvents.ShootingWeapon += _eventHandler.OnShooting;
+        PlayerEvents.ShotWeapon += _eventHandler.OnShot;
         PlayerEvents.Dying += _eventHandler.OnDying;
         PlayerEvents.InteractingLocker += _eventHandler.OnInteractingLocker;
     }
 
     protected override void UnregisterEvents()
     {
-        PlayerEvents.ShootingWeapon -= _eventHandler.OnShooting;
+        PlayerEvents.ShotWeapon -= _eventHandler.OnShot;
         PlayerEvents.Dying -= _eventHandler.OnDying;
         PlayerEvents.InteractingLocker -= _eventHandler.OnInteractingLocker;
 
@@ -95,7 +95,7 @@ public class Plugin : Event<Config, Translation>, IEventMap
 
         foreach (var ply in Config.JailorRoleCount.GetPlayers())
         {
-            ply.GiveLoadout(Config.JailorLoadouts, LoadoutFlags.IgnoreWeapons);
+            ply.GiveLoadout(Config.JailorLoadouts);
             ply.Position = SpawnPoints.Where(r => r.name == "SpawnpointMtf").ToList().RandomItem().transform.position;
         }
     }
