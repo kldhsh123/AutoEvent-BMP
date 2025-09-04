@@ -15,11 +15,9 @@ public class SchematicMerPatch
             var declaringType = frame.GetMethod().DeclaringType;
             var assemblyName = declaringType.Assembly.GetName().Name;
 
-            if (assemblyName.Contains("AutoEvent") && declaringType.Name == "Extensions")
-            {
-                __result = Path.Combine(AutoEvent.BaseConfigPath, "Schematics");
-                return false;
-            }
+            if (!assemblyName.Contains("AutoEvent")) continue;
+            __result = Path.Combine(AutoEvent.BaseConfigPath, "Schematics");
+            return false;
         }
 
         return true;
