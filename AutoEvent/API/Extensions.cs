@@ -13,7 +13,9 @@ using Mirror;
 using PlayerRoles;
 using PlayerRoles.Ragdolls;
 using ProjectMER.Features;
+using ProjectMER.Features.Objects;
 using ProjectMER.Features.Serializable;
+using ProjectMER.Features.Serializable.Schematics;
 using UnityEngine;
 using Object = UnityEngine.Object;
 using PrimitiveObjectToy = AdminToys.PrimitiveObjectToy;
@@ -208,14 +210,26 @@ public static class Extensions
         return false;
     }
 
+
+    public static SchematicObject LoadSchematic(SerializableSchematic serializableSchematic)
+    {
+        return ObjectSpawner.SpawnSchematic(serializableSchematic);
+    }
+    
     public static MapObject LoadMap(string schematicName, Vector3 pos, Quaternion rot, Vector3 scale)
     {
         try
         {
             Mero.TrySetIsDynamiclyDisabled(true);
 
-            var schematicObject = ObjectSpawner.SpawnSchematic(schematicName, pos, rot, scale);
+            if (!ObjectSpawner.TrySpawnSchematic(schematicName, pos, rot, scale, out var schematicObject))
+            {
+                AutoEvent.EventManager.CurrentEvent.StopEvent();
 
+                foreach (var pl in Player.ReadyList) pl.SetRole(RoleTypeId.Spectator);
+                return null;
+            }
+            
             foreach (var toyBase in schematicObject.AdminToyBases)
                 toyBase.syncInterval = 0;
 
@@ -252,7 +266,7 @@ public static class Extensions
 
     public static void UnLoadMap(MapObject mapObject)
     {
-        mapObject.Destroy();
+        mapObject?.Destroy();
     }
 
     public static void CleanUpAll()
