@@ -281,7 +281,7 @@ public static class Extensions
         Server.SendBroadcast(text, time, global::Broadcast.BroadcastFlags.Normal, true);
     }
 
-    public static void Broadcast(this Player player, string text, ushort time)
+    public static void Broadcast(this Player player, string text, ushort time = 3)
     {
         player.SendBroadcast(text, time, global::Broadcast.BroadcastFlags.Normal, true);
     }
