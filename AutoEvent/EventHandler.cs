@@ -69,7 +69,7 @@ internal class EventHandler : CustomEventsHandler
         if (activeEvent.EventHandlerSettings.HasFlag(EventFlags.IgnoreInfiniteAmmo))
             return;
 
-        if (!Extensions.InfiniteAmmoList.ContainsKey(ev.Player.NetworkId))
+        if (!Extensions.InfiniteAmmoList.TryGetValue(ev.Player.NetworkId, out var ammoMode))
             return;
 
         if (ev.FirearmItem.Base.TryGetModule<MagazineModule>(out var module))
@@ -81,6 +81,11 @@ internal class EventHandler : CustomEventsHandler
             }
 
             var playersAmmo = module.AmmoMax - module.AmmoStored;
+            if (ammoMode == AmmoMode.NoReloadInfiniteAmmo)
+            {
+                module.AmmoStored = playersAmmo;
+                return;
+            }
             ev.Player.SetAmmo(module.AmmoType, (ushort)playersAmmo);
         }
 
