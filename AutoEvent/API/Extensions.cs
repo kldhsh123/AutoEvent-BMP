@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using AdminToys;
 using AutoEvent.API.Enums;
 using AutoEvent.Intergrations;
 using Footprinting;
@@ -35,6 +37,7 @@ public static class Extensions
 
     public static readonly Dictionary<uint, AmmoMode> InfiniteAmmoList = new();
     public static readonly List<uint> InfinityStaminaList = [];
+    private static readonly ConcurrentDictionary<ulong, float> InteractableToys = new();
 
     public static bool HasLoadout(this Player ply, List<Loadout> loadouts,
         LoadoutCheckMethods checkMethod = LoadoutCheckMethods.HasRole)
@@ -200,7 +203,7 @@ public static class Extensions
                        $"Download and install Schematics.tar.gz from the github.";
             return false;
         }
-        
+
         response = $"You need to download the 'ProjectMER' to run this mini-game.\n" +
                    $"Read the installation instruction in the github.";
         return false;
@@ -211,7 +214,7 @@ public static class Extensions
     {
         return ObjectSpawner.SpawnSchematic(serializableSchematic);
     }
-    
+
     public static MapObject LoadMap(string schematicName, Vector3 pos, Quaternion rot, Vector3 scale)
     {
         try
@@ -225,7 +228,7 @@ public static class Extensions
                 foreach (var pl in Player.ReadyList) pl.SetRole(RoleTypeId.Spectator);
                 return null;
             }
-            
+
             foreach (var toyBase in schematicObject.AdminToyBases)
                 toyBase.syncInterval = 0;
 
@@ -287,7 +290,7 @@ public static class Extensions
     }
 
 
-    public static void GrenadeSpawn(Vector3 pos, float scale = 1f, float fuseTime = 1f, float radius = 1f)
+    public static void GrenadeSpawn(Vector3 pos, float scale = 1f, float fuseTime = 1f, float radius = 5f)
     {
         if (!InventoryItemLoader.TryGetItem(ItemType.GrenadeHE, out ThrowableItem result))
             return;
@@ -302,6 +305,7 @@ public static class Extensions
         var grenadeProjectile = (ExplosiveGrenadeProjectile)Pickup.Get(timeGrenade);
         grenadeProjectile.RemainingTime = fuseTime;
         grenadeProjectile.MaxRadius = radius;
+        grenadeProjectile.Base._playerDamageOverDistance = new AnimationCurve(new Keyframe(grenadeProjectile.MaxRadius, 200));
     }
 
     public static AudioPlayer PlayAudio(string fileName, byte volume, bool isLoop, bool isSpatial = false,
