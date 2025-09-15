@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
+using AutoEvent.Interfaces;
 using CommandSystem;
 using LabApi.Features.Console;
 using LabApi.Features.Permissions;
-using LabApi.Loader;
 
 namespace AutoEvent.Commands;
 
@@ -26,7 +26,7 @@ public class Volume : ICommand, IUsageProvider
             if (arguments.Count != 1)
             {
                 response =
-                    $"The current volume is {AutoEvent.Singleton.Config.Volume}%. Please specify the new volume from 0% - 200% to set it!";
+                    $"The current volume is {AutoEvent.MusicVolume}%. Please specify the new volume from 0% - 200% to set it!";
                 return false;
             }
 
@@ -37,15 +37,12 @@ public class Volume : ICommand, IUsageProvider
             }
 
             var newVolume = float.Parse(arguments.At(0));
-            if (AutoEvent.Singleton.TryLoadConfig<Config>("properties.yml", out var config))
+            AutoEvent.MusicVolume = newVolume;
+            foreach (var speaker in AudioPlayer.AudioPlayerByName.Values.SelectMany(audioPlayer => audioPlayer.SpeakersByName.Values))
             {
-                config.Volume = newVolume;
-                AutoEvent.Singleton.SaveConfig(config, "properties.yml");
+                speaker.Volume = AutoEvent.MusicVolume / 100f;
             }
 
-            foreach (var speaker in
-                     AudioPlayer.AudioPlayerById.Values.SelectMany(player => player.SpeakersByName.Values))
-                speaker.Volume *= newVolume;
             response = "The volume has been set!";
             return true;
         }

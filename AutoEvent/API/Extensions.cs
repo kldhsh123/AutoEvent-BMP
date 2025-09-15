@@ -326,7 +326,7 @@ public static class Extensions
             onIntialCreation: p =>
             {
                 p.AddSpeaker($"AutoEvent-Main-{fileName}", speakerPosition,
-                    volume * (AutoEvent.Singleton.Config.Volume / 100f),
+                    volume * (AutoEvent.MusicVolume / 100f),
                     isSpatial, minDistance, maxDistance);
             });
 
