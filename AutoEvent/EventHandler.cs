@@ -172,4 +172,11 @@ internal class EventHandler : CustomEventsHandler
 
         base.OnServerWaitingForPlayers();
     }
+
+    public override void OnServerRoundRestarted()
+    {
+        if (AutoEvent.EventManager.CurrentEvent is null) return;
+        AutoEvent.EventManager.CurrentEvent.StopEvent();
+        base.OnServerRoundRestarted();
+    }
 }
