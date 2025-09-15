@@ -212,7 +212,23 @@ public static class Extensions
 
     public static SchematicObject LoadSchematic(SerializableSchematic serializableSchematic)
     {
-        return ObjectSpawner.SpawnSchematic(serializableSchematic);
+        Mero.TrySetIsDynamiclyDisabled(true);
+
+        if (!ObjectSpawner.TrySpawnSchematic(serializableSchematic, out var schematicObject))
+        {
+            AutoEvent.EventManager.CurrentEvent.StopEvent();
+
+            foreach (var pl in Player.ReadyList) pl.SetRole(RoleTypeId.Spectator);
+            LogManager.Error($"The map {serializableSchematic.SchematicName} could not be loaded.");
+            return null;
+        }
+
+        foreach (var toyBase in schematicObject.AdminToyBases)
+            toyBase.syncInterval = 0;
+
+        Mero.TrySetIsDynamiclyDisabled(false);
+        
+        return schematicObject;
     }
 
     public static MapObject LoadMap(string schematicName, Vector3 pos, Quaternion rot, Vector3 scale)
@@ -226,6 +242,7 @@ public static class Extensions
                 AutoEvent.EventManager.CurrentEvent.StopEvent();
 
                 foreach (var pl in Player.ReadyList) pl.SetRole(RoleTypeId.Spectator);
+                LogManager.Error($"The map {schematicName} could not be loaded.");
                 return null;
             }
 
