@@ -41,13 +41,13 @@ public class Plugin : Event<Config, Translation>, IEventSound, IEventMap
     {
         _eventHandler = new EventHandler(this);
         PlayerEvents.Hurting += _eventHandler.OnHurting;
-        PlayerEvents.ProcessingJailbirdMessage += _eventHandler.OnJailbirdCharge;
+        PlayerEvents.ProcessingJailbirdMessage += _eventHandler.OnProcessingJailbirdMessage;
     }
 
     protected override void UnregisterEvents()
     {
         PlayerEvents.Hurting -= _eventHandler.OnHurting;
-        PlayerEvents.ProcessingJailbirdMessage -= _eventHandler.OnJailbirdCharge;
+        PlayerEvents.ProcessingJailbirdMessage -= _eventHandler.OnProcessingJailbirdMessage;
         _eventHandler = null;
     }
 
