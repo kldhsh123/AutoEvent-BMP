@@ -5,6 +5,7 @@ using AutoEvent.API;
 using AutoEvent.API.Enums;
 using AutoEvent.API.Season;
 using AutoEvent.Interfaces;
+using LabApi.Features.Wrappers;
 using MEC;
 using Random = UnityEngine.Random;
 
@@ -333,6 +334,10 @@ namespace AutoEvent.Interfaces
         {
             KillLoop = true;
             Timing.KillCoroutines(BroadcastCoroutine);
+            
+            foreach (var player in Player.ReadyList)
+                Timing.KillCoroutines(player.NetworkId.ToString());
+            
             Timing.CallDelayed(FrameDelayInSeconds + .1f, () =>
             {
                 if (GameCoroutine.IsRunning) Timing.KillCoroutines(GameCoroutine);
