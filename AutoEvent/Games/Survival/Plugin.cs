@@ -87,7 +87,7 @@ public class Plugin : Event<Config, Translation>, IEventSound, IEventMap
         {
             LogManager.Debug($"Making player {player.Nickname} a zombie.");
             player.GiveLoadout(Config.ZombieLoadouts);
-            Extensions.PlayPlayerAudio(SoundInfo.AudioPlayer, player, Config.ZombieScreams.RandomItem(), 15);
+            SoundInfo.AudioPlayer.PlayPlayerAudio(player, Config.ZombieScreams.RandomItem(), 15);
             if (Player.ReadyList.Count(r => r.IsSCP) != 1) continue;
             if (FirstZombie is not null)
                 continue;
@@ -151,7 +151,7 @@ public class Plugin : Event<Config, Translation>, IEventSound, IEventMap
         }
 
         foreach (var player in AudioPlayer.AudioPlayerByName.Values)
-            Extensions.StopAudio(player);
+            player.StopAudio();
 
         Extensions.PlayAudio(musicName);
         Extensions.ServerBroadcast(text, 10);
@@ -160,6 +160,6 @@ public class Plugin : Event<Config, Translation>, IEventSound, IEventMap
     protected override void OnCleanup()
     {
         foreach (var player in AudioPlayer.AudioPlayerByName.Values)
-            Extensions.StopAudio(player);
+            player.StopAudio();
     }
 }

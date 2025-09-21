@@ -6,11 +6,13 @@ using System.Linq;
 using AdminToys;
 using AutoEvent.API.Enums;
 using AutoEvent.Intergrations;
+using CustomPlayerEffects;
 using Footprinting;
 using InventorySystem;
 using InventorySystem.Items.Pickups;
 using InventorySystem.Items.ThrowableProjectiles;
 using LabApi.Features.Wrappers;
+using MEC;
 using Mirror;
 using PlayerRoles;
 using PlayerRoles.Ragdolls;
@@ -210,7 +212,7 @@ public static class Extensions
     }
 
 
-    public static SchematicObject LoadSchematic(SerializableSchematic serializableSchematic)
+    public static SchematicObject LoadSchematic(this SerializableSchematic serializableSchematic)
     {
         Mero.TrySetIsDynamiclyDisabled(true);
 
@@ -242,7 +244,7 @@ public static class Extensions
                 AutoEvent.EventManager.CurrentEvent.StopEvent();
 
                 foreach (var pl in Player.ReadyList) pl.SetRole(RoleTypeId.Spectator);
-                LogManager.Error($"The map {schematicName} could not be loaded.");
+                LogManager.Error($"The map {schematicName} could not be loaded because it was not found. Delete and re-download the schematics.");
                 return null;
             }
 
@@ -354,7 +356,7 @@ public static class Extensions
         return audioPlayer;
     }
 
-    public static void PlayPlayerAudio(AudioPlayer audioPlayer, Player player, string fileName, byte volume)
+    public static void PlayPlayerAudio(this AudioPlayer audioPlayer, Player player, string fileName, byte volume)
     {
         if (audioPlayer is null)
         {
@@ -378,7 +380,7 @@ public static class Extensions
         audioPlayer.AddClip(fileName);
     }
 
-    public static void PauseAudio(AudioPlayer audioPlayer)
+    public static void PauseAudio(this AudioPlayer audioPlayer)
     {
         if (audioPlayer is null)
         {
@@ -390,7 +392,7 @@ public static class Extensions
         if (audioPlayer.TryGetClip(clipId, out var clip)) clip.IsPaused = true;
     }
 
-    public static void ResumeAudio(AudioPlayer audioPlayer)
+    public static void ResumeAudio(this AudioPlayer audioPlayer)
     {
         if (audioPlayer is null)
         {
@@ -402,7 +404,7 @@ public static class Extensions
         if (audioPlayer.TryGetClip(clipId, out var clip)) clip.IsPaused = false;
     }
 
-    public static void StopAudio(AudioPlayer audioPlayer)
+    public static void StopAudio(this AudioPlayer audioPlayer)
     {
         if (audioPlayer is null)
         {
@@ -412,5 +414,31 @@ public static class Extensions
 
         audioPlayer.RemoveAllClips();
         audioPlayer.Destroy();
+    }
+    
+    private static ulong Key(this InvisibleInteractableToy toy, uint playerNetId)
+    {
+        return ((ulong)toy.netIdentity.netId << 32) | playerNetId;
+    }
+
+    public static void SetInteractableToy(this InvisibleInteractableToy toy, Player player, float duration)
+    {
+        if (toy == null || player == null) return;
+        InteractableToys[Key(toy, player.NetworkId)] = duration;
+    }
+
+    public static bool TryGetInteractableToy(this InvisibleInteractableToy toy, ReferenceHub hub, out float duration)
+    {
+        duration = 0;
+        if (toy == null || hub == null) return false;
+        return InteractableToys.TryGetValue(Key(toy, hub.networkIdentity.netId), out duration);
+    }
+
+    public static void ClearInteractableToy(this InvisibleInteractableToy toy)
+    {
+        if (toy == null) return;
+        var toyId = toy.netIdentity.netId;
+        foreach (var k in InteractableToys.Keys.Where(k => k >> 32 == toyId))
+            InteractableToys.TryRemove(k, out _);
     }
 }

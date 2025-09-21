@@ -73,7 +73,7 @@ internal class EventHandler : CustomEventsHandler
 
     public override void OnPlayerShootingWeapon(PlayerShootingWeaponEventArgs ev)
     {
-        if (AutoEvent.EventManager.CurrentEvent is not { } activeEvent) return;
+        if (AutoEvent.EventManager.CurrentEvent is null) return;
 
         if (!Extensions.InfiniteAmmoList.TryGetValue(ev.Player.NetworkId, out var ammoMode))
             return;
@@ -162,7 +162,7 @@ internal class EventHandler : CustomEventsHandler
     {
         try
         {
-            var currentVersion = AutoEvent.Singleton.Version; // snapshot
+            var currentVersion = AutoEvent.Singleton.Version;
             _ = Task.Run(() => AutoEvent.CheckForUpdatesAsync(currentVersion));
         }
         catch (Exception ex)
