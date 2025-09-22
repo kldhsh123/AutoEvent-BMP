@@ -29,7 +29,11 @@ public class Plugin : Event<Config, Translation>, IEventMap, IEventSound
     public override string Author { get; set; } = "RisottoMan";
     public override string CommandName { get; set; } = "cs";
     protected override FriendlyFireSettings ForceEnableFriendlyFire { get; set; } = FriendlyFireSettings.Disable;
-    public override EventFlags EventHandlerSettings { get; set; } = EventFlags.IgnoreRagdoll | EventFlags.IgnoreHandcuffing | EventFlags.IgnoreBulletHole | EventFlags.IgnoreBloodDecal;
+
+    public override EventFlags EventHandlerSettings { get; set; } = EventFlags.IgnoreRagdoll |
+                                                                    EventFlags.IgnoreHandcuffing |
+                                                                    EventFlags.IgnoreBulletHole |
+                                                                    EventFlags.IgnoreBloodDecal;
 
     public MapInfo MapInfo { get; set; } = new()
     {

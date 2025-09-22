@@ -92,6 +92,7 @@ internal class EventHandler : CustomEventsHandler
                 module.AmmoStored = playersAmmo;
                 return;
             }
+
             ev.Player.SetAmmo(module.AmmoType, (ushort)playersAmmo);
         }
 

@@ -7,69 +7,77 @@ namespace AutoEvent.Games.AmongUs.Features;
 
 internal class TaskManager
 {
-    internal TaskManager(Player player, List<Task> task)
+    private static readonly Dictionary<Player, TaskManager> PlayerTasks = new();
+
+    internal TaskManager(Player player)
     {
-        IsDone = false;
-        Tasks = task;
         PlayerTasks[player] = this;
-        LogManager.Debug($"Added to {player.Nickname}");
     }
 
-    internal static Dictionary<Player, TaskManager> PlayerTasks { get; set; } = new();
-    internal static bool IsDone { set; get; }
-    internal List<Task> Tasks { set; get; }
+    internal List<Task> Tasks { get; init; } = [];
 
-    internal static void AddTask(TaskManager tm, Task task)
+    internal static bool TryGet(Player player, out TaskManager tm)
     {
-        var maxStageTask = task.MaxStageTask;
-        if (maxStageTask > 0 && task.StageTasks.Count > maxStageTask)
+        return PlayerTasks.TryGetValue(player, out tm);
+    }
+
+    internal static void AddTask(TaskManager tm, Task template)
+    {
+        if (tm == null || template == null) return;
+        tm.Tasks.Add(CloneTask(template));
+    }
+
+    private static Task CloneTask(Task original)
+    {
+        var rand = new Random();
+        var clone = new Task
         {
-            var stageTasks = task.StageTasks;
-            var random = new Random();
-            task.StageTasks = stageTasks.OrderBy(_ => random.Next()).Take(maxStageTask).ToList();
-            LogManager.Debug(
-                $"Task {task.Name} had more stage tasks than allowed. Reduced to {task.StageTasks.Count} stage tasks.");
-        }
+            Name = original.Name,
+            RoomName = original.RoomName,
+            Type = original.Type,
+            Description = original.Description,
+            IsVisual = original.IsVisual,
+            MaxStageTask = original.MaxStageTask,
+            StageTasks = []
+        };
 
-        tm.Tasks.Add(task);
-    }
+        if (original.StageTasks is not { Count: > 0 }) return clone;
+        var list = original.StageTasks;
+        if (original.MaxStageTask > 0 && list.Count > original.MaxStageTask)
+            list = list.OrderBy(_ => rand.Next()).Take(original.MaxStageTask).ToList();
 
-    internal static void Clear()
-    {
-        LogManager.Debug("Clearing TaskManager");
-        PlayerTasks.Clear();
-    }
-    
-    internal static void Remove(Player player)
-    {
-        if (!TryGet(player, out _)) return;
-        PlayerTasks.Remove(player);
-        LogManager.Debug($"Removed TaskManager from {player.Nickname}");
-    }
-
-    internal static bool TryGet(Player player, out TaskManager taskManager)
-    {
-        taskManager = null;
-        return PlayerTasks.TryGetValue(player, out taskManager);
-    }
-
-    internal static List<StageTask> GetPlayerStageTasks(Player player)
-    {
-        if (!TryGet(player, out var tasks) || tasks is null) return [];
-        return tasks.Tasks.Where(task => task.IsDone).SelectMany(t => t.StageTasks).Where(t => !t.IsDone).ToList();
+        foreach (var st in list)
+            clone.StageTasks.Add(new StageTask
+            {
+                Name = st.Name,
+                RoomName = st.RoomName,
+                Type = st.Type,
+                Description = st.Description,
+                IsDone = false
+            });
+        return clone;
     }
 
     internal static int CountByType(Player player, TaskType type)
     {
-        if (!TryGet(player, out var tasks) || tasks is null || tasks.Tasks.Count == 0) return 0;
-        return tasks.Tasks.Count(t => t.Type == type);
+        return !TryGet(player, out var tm) ? 0 : tm.Tasks.Count(t => t.Type == type);
+    }
+
+    internal static List<StageTask> GetPlayerStageTasks(Player player)
+    {
+        if (!TryGet(player, out var tm)) return [];
+        return tm.Tasks
+            .Where(t => t.IsDone && t.StageTasks.Count > 0)
+            .SelectMany(t => t.StageTasks)
+            .Where(st => !st.IsDone)
+            .ToList();
     }
 
     internal static bool IsTaskDone(Task task)
     {
-        if (task is null) return false;
+        if (task == null) return false;
         if (task.StageTasks.Count == 0) return task.IsDone;
-        return task.IsDone && task.StageTasks.All(st => st.IsDone);
+        return task.IsDone && task.StageTasks.All(s => s.IsDone);
     }
 
     internal static int GetLength(Task task)
@@ -82,7 +90,7 @@ internal class TaskManager
             _ => throw new ArgumentOutOfRangeException()
         };
     }
-    
+
     internal static int GetLength(StageTask task)
     {
         return task.Type switch
@@ -92,5 +100,15 @@ internal class TaskManager
             TaskType.Long => 15,
             _ => throw new ArgumentOutOfRangeException()
         };
+    }
+
+    internal static void ClearForPlayers(IEnumerable<Player> players)
+    {
+        foreach (var p in players)
+        {
+            if (!TryGet(p, out var tm)) continue;
+            tm.Tasks.Clear();
+            PlayerTasks.Remove(p);
+        }
     }
 }

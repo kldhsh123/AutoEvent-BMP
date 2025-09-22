@@ -6,13 +6,11 @@ using System.Linq;
 using AdminToys;
 using AutoEvent.API.Enums;
 using AutoEvent.Intergrations;
-using CustomPlayerEffects;
 using Footprinting;
 using InventorySystem;
 using InventorySystem.Items.Pickups;
 using InventorySystem.Items.ThrowableProjectiles;
 using LabApi.Features.Wrappers;
-using MEC;
 using Mirror;
 using PlayerRoles;
 using PlayerRoles.Ragdolls;
@@ -229,7 +227,7 @@ public static class Extensions
             toyBase.syncInterval = 0;
 
         Mero.TrySetIsDynamiclyDisabled(false);
-        
+
         return schematicObject;
     }
 
@@ -244,7 +242,8 @@ public static class Extensions
                 AutoEvent.EventManager.CurrentEvent.StopEvent();
 
                 foreach (var pl in Player.ReadyList) pl.SetRole(RoleTypeId.Spectator);
-                LogManager.Error($"The map {schematicName} could not be loaded because it was not found. Delete and re-download the schematics.");
+                LogManager.Error(
+                    $"The map {schematicName} could not be loaded because it was not found. Delete and re-download the schematics.");
                 return null;
             }
 
@@ -324,7 +323,8 @@ public static class Extensions
         var grenadeProjectile = (ExplosiveGrenadeProjectile)Pickup.Get(timeGrenade);
         grenadeProjectile.RemainingTime = fuseTime;
         grenadeProjectile.MaxRadius = radius;
-        grenadeProjectile.Base._playerDamageOverDistance = new AnimationCurve(new Keyframe(grenadeProjectile.MaxRadius, 200));
+        grenadeProjectile.Base._playerDamageOverDistance =
+            new AnimationCurve(new Keyframe(grenadeProjectile.MaxRadius, 200));
     }
 
     public static AudioPlayer PlayAudio(string fileName, bool isLoop = false, bool isSpatial = false,
@@ -415,7 +415,7 @@ public static class Extensions
         audioPlayer.RemoveAllClips();
         audioPlayer.Destroy();
     }
-    
+
     private static ulong Key(this InvisibleInteractableToy toy, uint playerNetId)
     {
         return ((ulong)toy.netIdentity.netId << 32) | playerNetId;

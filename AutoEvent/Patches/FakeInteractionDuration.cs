@@ -14,6 +14,7 @@ public static class InvisibleInteractableToySearchTimePrefix
             LogManager.Debug("Using default interaction duration.");
             return true;
         }
+
         LogManager.Debug($"Using custom interaction duration: {custom} seconds.");
         __result = custom;
         return false;

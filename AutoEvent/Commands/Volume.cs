@@ -37,10 +37,8 @@ public class Volume : ICommand, IUsageProvider
 
             var newVolume = float.Parse(arguments.At(0));
             AutoEvent.MusicVolume = newVolume;
-            foreach (var speaker in AudioPlayer.AudioPlayerByName.Values.SelectMany(audioPlayer => audioPlayer.SpeakersByName.Values))
-            {
-                speaker.Volume = AutoEvent.MusicVolume / 100f;
-            }
+            foreach (var speaker in AudioPlayer.AudioPlayerByName.Values.SelectMany(audioPlayer =>
+                         audioPlayer.SpeakersByName.Values)) speaker.Volume = AutoEvent.MusicVolume / 100f;
 
             response = "The volume has been set!";
             return true;

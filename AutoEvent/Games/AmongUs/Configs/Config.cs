@@ -39,10 +39,9 @@ public class Config : EventConfig
     public int CommonTasks { get; set; } = 1;
     public int LongTasks { get; set; } = 1;
     public int ShortTasks { get; set; } = 2;
-    
+
     //todo: Special Tasks, Visual Tasks
-    [YamlIgnore]
-    public bool VisualTasks { get; set; } = true;
+    [YamlIgnore] public bool VisualTasks { get; set; } = true;
 
     [YamlIgnore]
     public Dictionary<string, List<Task>> Tasks { get; set; } = new()

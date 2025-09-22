@@ -46,7 +46,7 @@ public class Loadout
 public enum AmmoMode
 {
     [Description("Ammo will be normal.")] None = 0,
-    
+
     [Description("Player will not be able to reload.")]
     NoReloadInfiniteAmmo = 1,
 

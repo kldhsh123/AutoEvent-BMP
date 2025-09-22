@@ -25,27 +25,27 @@ internal class Vote : ICommand, IUsageProvider
             response = "No meeting is currently in progress.";
             return false;
         }
-        
+
         if (arguments.Count != 1)
         {
             response = "Usage: .vote <color>";
             return false;
         }
-        
+
         var player = Player.Get(sender);
-        
+
         if (player == null)
         {
             response = "Player not found.";
             return false;
         }
-        
+
         if (!Plugin.Instance.Impostors.Contains(player) && !Plugin.Instance.Crewmates.Contains(player))
         {
             response = "You are not part of the Among Us event.";
             return false;
         }
-        
+
         var colorName = arguments.At(0);
 
         if (!Enum.TryParse(colorName, true, out Misc.PlayerInfoColorTypes colorType) ||
@@ -61,17 +61,16 @@ internal class Vote : ICommand, IUsageProvider
             response = "The player with that color was not found.";
             return false;
         }
-        
+
         if (votedPlayer == player)
         {
             response = "You cannot vote for yourself.";
             return false;
         }
-        
+
         Plugin.Instance.PlayerVotes[player.NetworkId] = votedPlayer.NetworkId;
         response = $"You voted for {votedPlayer.Nickname} ({votedPlayer.GroupColor}).";
         return true;
-
     }
 
     public string[] Usage => ["Player's Color"];

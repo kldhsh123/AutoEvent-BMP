@@ -23,7 +23,9 @@ public class Plugin : Event<Config, Translation>, IEventSound, IEventMap
     public override string Author { get; set; } = "RisottoMan";
     public override string CommandName { get; set; } = "zombie2";
     private EventHandler EventHandler { get; set; }
-    public override EventFlags EventHandlerSettings { get; set; } = EventFlags.IgnoreRagdoll | EventFlags.IgnoreBulletHole;
+
+    public override EventFlags EventHandlerSettings { get; set; } =
+        EventFlags.IgnoreRagdoll | EventFlags.IgnoreBulletHole;
 
 
     public MapInfo MapInfo { get; set; } = new()

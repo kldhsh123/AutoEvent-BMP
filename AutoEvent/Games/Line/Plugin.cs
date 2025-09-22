@@ -57,7 +57,6 @@ public class Plugin : Event<Config, Translation>, IEventSound, IEventMap
             return;
 
         foreach (var block in MapInfo.Map.AttachedBlocks.Where(block => block != null))
-        {
             switch (block.name)
             {
                 case "DeadZone": block.AddComponent<LineComponent>().Init(this, ObstacleType.MiniWalls); break;
@@ -65,7 +64,6 @@ public class Plugin : Event<Config, Translation>, IEventSound, IEventMap
                 case "Line": block.AddComponent<LineComponent>().Init(this, ObstacleType.Ground); break;
                 case "Shield": NetworkServer.Destroy(block); break;
             }
-        }
     }
 
     protected override void ProcessFrame()
