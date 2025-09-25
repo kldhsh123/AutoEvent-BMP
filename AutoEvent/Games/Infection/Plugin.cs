@@ -116,7 +116,7 @@ public class Plugin : Event<Config, Translation>, IEventSound, IEventMap
             player.GiveLoadout(Config.ZombieLoadouts);
         }
 
-        SoundInfo.AudioPlayer.PlayPlayerAudio(player, Config.ZombieScreams.RandomItem(), 15);
+        Extensions.PlayPlayerAudio(player, Config.ZombieScreams.RandomItem());
     }
 
     protected override bool IsRoundDone()
