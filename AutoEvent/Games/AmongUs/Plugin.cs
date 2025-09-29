@@ -131,7 +131,7 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap
             } else if (adminToyBase.name == "VentObject")
                 VentObject = adminToyBase;
 
-        Impostors = Config.Impostors.GetPlayers();
+        Impostors = Player.ReadyList.Where(p => !p.IsDummy).ToList();//Config.Impostors.GetPlayers();
         var ready = Player.ReadyList.ToList();
         Crewmates = ready.Except(Impostors).ToList();
 
@@ -213,17 +213,30 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap
         CreateTasksForPlayers(Crewmates);
     }
 
-    internal IEnumerator<float> BroadcastVotingCountdown()
+    internal IEnumerator<float> BroadcastVotingCountdown(string reason = "")
     {
-        for (var time = Config.VotingTime; time > 0; time--)
+        var time = Config.VotingTime;
+        var shortened = false;
+        LogManager.Debug("reason: " + reason);
+        while (time > 0)
         {
-            foreach (var crewmate in Crewmates)
-                crewmate.Broadcast(
-                    Translation.VotingInfo.Replace("{time}", time.ToString(CultureInfo.InvariantCulture)));
-            foreach (var impostor in Impostors)
-                impostor.Broadcast(
-                    Translation.VotingInfo.Replace("{time}", time.ToString(CultureInfo.InvariantCulture)));
+            var playersCount = Impostors.Count(p => p.IsAlive) + Crewmates.Count(p => p.IsAlive);
+
+            if (!shortened && playersCount > 0 && PlayerVotes.Count >= playersCount && time > 5)
+            {
+                time = 5;
+                shortened = true;
+            }
+            
+            foreach (var player in Player.ReadyList.Where(p => Impostors.Contains(p) || Crewmates.Contains(p)))
+            {
+                player.Broadcast(
+                    Translation.VotingInfo.Replace("{reason}", reason).Replace("{time}",
+                        time.ToString(CultureInfo.InvariantCulture)));
+            }
+
             yield return Timing.WaitForSeconds(1f);
+            time--;
         }
 
         Instance.MeetingCalled = false;
@@ -419,9 +432,8 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap
         foreach (var skin in PlayerSkins.Values)
             NetworkServer.Destroy(skin);
 
-        foreach (var textToy in PlayerTextToys.Values)
-            textToy?.Destroy();
-
+        foreach (var textToy in PlayerTextToys.Values.Where(textToy => textToy != null))
+            textToy.Destroy();
 
         PlayerSkins.Clear();
         PlayerVotes.Clear();
@@ -508,7 +520,7 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap
         }
     }
 
-    private static Misc.PlayerInfoColorTypes? GetColorTypeByHex(string hex)
+    internal static Misc.PlayerInfoColorTypes? GetColorTypeByHex(string hex)
     {
         foreach (var pair in
                  Misc.AllowedColors.Where(pair => pair.Value.Equals(hex, StringComparison.OrdinalIgnoreCase)))

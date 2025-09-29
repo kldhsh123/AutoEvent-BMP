@@ -37,19 +37,27 @@ All Deathmatch:
   description: 'Harcoljatok egymás ellen mindenki mindenki ellen módban.'
   command_name: 'dm'
 Among Us:
-  killed_by_impostor: 'Megölt egy Impostor!'
-  kill_cooldown: 'Még {time} másodpercig nem ölhetsz!'
-  too_far: 'Túl messze vagy az öléshez!'
+  starting_event: |-
+    <b>{name}</b>
+    There are {time} seconds before the game starts. Selecting the <color=red><b>Impostors</b></color>.
+  you_are_impostor: 'You are the <color=red>Impostor</color>!'
+  you_are_crewmate: 'You are a <color=#00FFFF>Crewmate</color>!'
+  impostor_win: '<color=red>Impostors</color> have won!'
+  crewmate_win: '<color=#00FFFF>Crewmates</color> have won!'
+  killed_by_impostor: 'You were killed by an Impostor!'
+  kill_cooldown: 'You can''t kill for another {time} seconds!'
+  too_far: 'You are too far away to kill!'
   voting_info: |-
-    Szavazni a .vote <szín> beírásával tudsz a konzolba, amit alapértelmezetten a ~ gombbal nyithatsz meg.
-    A színeket a játékoslista (N gomb) megnyitásával láthatod.
-    {time} másodperc van hátra.
-  meeting_called: '{player} emergency meetinget hívott össze!'
-  death_body_reported: '{player} jelentett egy holttestet!'
-  emergency_meetings_reached: 'Nem hívhatsz össze több emergency meetinget!'
-  meeting_cooldown: 'Még {time} másodpercig nem hívhatsz össze emergency meetinget!'
+    {reason}
+    You can vote by writing .vote <color> to the ClientConsole which you can open with ~ by default.
+    You can get the colors by opening the PlayerList with N.
+    {time} seconds remaining.
+  meeting_called: 'A meeting has been called by {player}!'
+  death_body_reported: '<color=red>{deadPlayer}</color>''s body found by <color=yellow>{reportedPlayer}</color>!'
+  emergency_meetings_reached: 'You can''t call any more emergency meetings!'
+  meeting_cooldown: 'You can''t call a meeting for another {time} seconds!'
   name: 'Among Us'
-  description: 'Az Impostor közöttünk van.'
+  description: 'The Impostor is among us.'
   command_name: 'amongus'
 Atomic Escape:
   before_start: |-

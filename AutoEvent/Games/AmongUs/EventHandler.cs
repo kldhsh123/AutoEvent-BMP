@@ -12,7 +12,6 @@ using Mirror;
 using ProjectMER.Features.Extensions;
 using ProjectMER.Features.Serializable.Schematics;
 using UnityEngine;
-using Extensions = AutoEvent.API.Extensions;
 using PrimitiveObjectToy = AdminToys.PrimitiveObjectToy;
 
 namespace AutoEvent.Games.AmongUs;
@@ -217,52 +216,93 @@ public class EventHandler(Plugin plugin)
             return;
         }
 
-        if (!ev.Interactable.GameObject.name.StartsWith("Meeting")) return;
-        if (Plugin.Instance.MeetingCalled) return;
-
-        if (plugin.PlayerMeetings.TryGetValue(ev.Player, out var meetings) &&
-            meetings >= plugin.Config.EmergencyMeetings)
+        if (ev.Interactable.GameObject.name.StartsWith("Meeting"))
         {
-            ev.Player.SendHint(plugin.Translation.EmergencyMeetingsReached);
-            return;
+            if (Plugin.Instance.MeetingCalled) return;
+
+            if (plugin.PlayerMeetings.TryGetValue(ev.Player, out var meetings) &&
+                meetings >= plugin.Config.EmergencyMeetings)
+            {
+                ev.Player.SendHint(plugin.Translation.EmergencyMeetingsReached);
+                return;
+            }
+
+            if (plugin.MeetingCooldown > 0)
+            {
+                ev.Player.SendHint(
+                    plugin.Translation.MeetingCooldown.Replace("{time}", plugin.MeetingCooldown.ToString()));
+                return;
+            }
+
+            if (plugin.Impostors.Contains(ev.Player) || plugin.Crewmates.Contains(ev.Player))
+            {
+                if (!plugin.PlayerMeetings.ContainsKey(ev.Player))
+                    plugin.PlayerMeetings.Add(ev.Player, 0);
+                plugin.PlayerMeetings[ev.Player] += 1;
+            }
+
+            Plugin.Instance.MeetingCalled = true;
+            foreach (var player in Player.ReadyList)
+            {
+                player.EnableEffect<Ensnared>();
+                player.ClearInventory();
+            }
+
+            var ready = Player.ReadyList.ToList();
+            var spawnCount = plugin.SpawnList.Count;
+            for (var i = 0; i < ready.Count; i++)
+            {
+                var player = ready[i];
+                player.DisableEffect<Ensnared>();
+                player.Position = plugin.SpawnList[i % spawnCount].transform.position;
+                player.EnableEffect<Ensnared>();
+
+                if (Plugin.Instance.MeetingButton == null) continue;
+                var direction = Plugin.Instance.MeetingButton.transform.position - player.Position;
+                player.Rotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
+            }
+
+            Timing.RunCoroutine(plugin.BroadcastVotingCountdown(plugin.Translation.MeetingCalled), "BroadcastVotingCountdown");
         }
 
-        if (plugin.MeetingCooldown > 0)
+        if (ev.Interactable.GameObject.name == "ReportBody")
         {
-            ev.Player.SendHint(plugin.Translation.MeetingCooldown.Replace("{time}", plugin.MeetingCooldown.ToString()));
-            return;
+            LogManager.Debug("ReportBody interacted");
+           if (!plugin.PlayerSkins.ContainsValue(ev.Interactable.Parent?.parent.gameObject)) return;
+           LogManager.Debug("Reported body is a player skin");
+           if (!plugin.Impostors.Contains(ev.Player) && !plugin.Crewmates.Contains(ev.Player)) return;
+           LogManager.Debug("Reporter is a valid player");
+            var playerId = plugin.PlayerSkins.First(x => x.Value == ev.Interactable.Parent?.parent.gameObject).Key;
+            var deadPlayer = Player.Get(playerId);
+            if (deadPlayer is null) return;
+            LogManager.Debug("Reported PlayerId: " + deadPlayer.Nickname);
+            
+            if (!plugin.PlayerColors.TryGetValue(deadPlayer.NetworkId, out var color)) return;
+            if (!plugin.PlayerColors.TryGetValue(ev.Player.NetworkId, out var reportedColor)) return;
+            if (Plugin.Instance.MeetingCalled) return;
+
+            Plugin.Instance.MeetingCalled = true;
+            foreach (var player in Player.ReadyList)
+            {
+                player.EnableEffect<Ensnared>();
+                player.ClearInventory();
+            }
+            
+            var ready = Player.ReadyList.ToList();
+            var spawnCount = plugin.SpawnList.Count;
+            for (var i = 0; i < ready.Count; i++)
+            {
+                var player = ready[i];
+                player.DisableEffect<Ensnared>();
+                player.Position = plugin.SpawnList[i % spawnCount].transform.position;
+                player.EnableEffect<Ensnared>();
+
+                if (Plugin.Instance.MeetingButton == null) continue;
+                var direction = Plugin.Instance.MeetingButton.transform.position - player.Position;
+                player.Rotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
+            }
+            Timing.RunCoroutine(plugin.BroadcastVotingCountdown(plugin.Translation.DeathBodyReported.Replace("{deadPlayer}", $"<color={color}>{deadPlayer.Nickname} {Plugin.GetColorTypeByHex(color)}</color>").Replace("{reportedPlayer}", $"<color={reportedColor}>{ev.Player.Nickname} {Plugin.GetColorTypeByHex(reportedColor)}</color>")), "BroadcastVotingCountdown");
         }
-
-        if (plugin.Impostors.Contains(ev.Player) || plugin.Crewmates.Contains(ev.Player))
-        {
-            if (!plugin.PlayerMeetings.ContainsKey(ev.Player))
-                plugin.PlayerMeetings.Add(ev.Player, 0);
-            plugin.PlayerMeetings[ev.Player] += 1;
-        }
-
-        Plugin.Instance.MeetingCalled = true;
-        foreach (var player in Player.ReadyList)
-        {
-            player.EnableEffect<Ensnared>();
-            player.ClearInventory();
-        }
-
-        var ready = Player.ReadyList.ToList();
-        var spawnCount = plugin.SpawnList.Count;
-        for (var i = 0; i < ready.Count; i++)
-        {
-            var player = ready[i];
-            player.DisableEffect<Ensnared>();
-            player.Position = plugin.SpawnList[i % spawnCount].transform.position;
-            player.EnableEffect<Ensnared>();
-
-            if (Plugin.Instance.MeetingButton == null) continue;
-            var direction = Plugin.Instance.MeetingButton.transform.position - player.Position;
-            player.Rotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
-        }
-
-        Timing.RunCoroutine(plugin.BroadcastVotingCountdown(), "BroadcastVotingCountdown");
-        Extensions.ServerBroadcast(plugin.Translation.VotingInfo, 30);
     }
 
     private static IEnumerator<float> VentCoroutine(Player player, Animator animator, GameObject playerPos)
