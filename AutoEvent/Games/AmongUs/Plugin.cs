@@ -235,31 +235,34 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap
             .ToList();
         LogManager.Debug(
             $"Max votes count: {maxVotes.Count}, max votes: {(maxVotes.Count > 0 ? maxVotes[0].Count : 0)}");
-        if (maxVotes.Count == 0)
+        switch (maxVotes.Count)
         {
-            Extensions.ServerBroadcast("No one was voted out.", 5);
-        }
-        else if (maxVotes.Count > 1 && maxVotes[0].Count == maxVotes[1].Count)
-        {
-            Extensions.ServerBroadcast("It's a tie! No one was voted out.", 5);
-        }
-        else
-        {
-            var votedOut = Player.Get(maxVotes[0].Id);
-            if (votedOut != null)
+            case 0:
+                Extensions.ServerBroadcast("No one was voted out.", 5);
+                break;
+            case > 1 when maxVotes[0].Count == maxVotes[1].Count:
+                Extensions.ServerBroadcast("It's a tie! No one was voted out.", 5);
+                break;
+            default:
             {
-                votedOut.Kill("Voted out");
-                votedOut.DisplayName = string.Empty;
-                TaskManager.ClearForPlayers([votedOut]);
+                var votedOut = Player.Get(maxVotes[0].Id);
+                if (votedOut != null)
+                {
+                    votedOut.Kill("Voted out");
+                    votedOut.DisplayName = string.Empty;
+                    TaskManager.ClearForPlayers([votedOut]);
 
-                if (PlayerSkins.TryGetValue(votedOut.NetworkId, out var skin))
-                    NetworkServer.Destroy(skin);
-                PlayerSkins.Remove(votedOut.NetworkId);
-                PlayerColors.Remove(votedOut.NetworkId);
-                Impostors.Remove(votedOut);
-                Crewmates.Remove(votedOut);
-                KillCooldowns.Remove(votedOut);
-                Extensions.ServerBroadcast($"{votedOut.Nickname} was voted out.", 5);
+                    if (PlayerSkins.TryGetValue(votedOut.NetworkId, out var skin))
+                        NetworkServer.Destroy(skin);
+                    PlayerSkins.Remove(votedOut.NetworkId);
+                    PlayerColors.Remove(votedOut.NetworkId);
+                    Impostors.Remove(votedOut);
+                    Crewmates.Remove(votedOut);
+                    KillCooldowns.Remove(votedOut);
+                    Extensions.ServerBroadcast($"{votedOut.Nickname} was voted out.", 5);
+                }
+
+                break;
             }
         }
 
@@ -271,8 +274,13 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap
         foreach (var skin in PlayerSkins.Values.Where(skin => skin.name == "DeathSkin"))
             NetworkServer.Destroy(skin);
 
+        foreach (var player in Player.ReadyList)
+        {
+            if (Impostors.Contains(player)) 
+                player.AddItem(ItemType.GunCOM18);
 
-        foreach (var player in Player.ReadyList) player.DisableEffect<Ensnared>();
+            player.DisableEffect<Ensnared>();
+        }
     }
 
     protected override void ProcessFrame()

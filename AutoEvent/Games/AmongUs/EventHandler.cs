@@ -244,8 +244,7 @@ public class EventHandler(Plugin plugin)
         foreach (var player in Player.ReadyList)
         {
             player.EnableEffect<Ensnared>();
-            if (player.CurrentItem != null)
-                player.CurrentItem = null;
+            player.ClearInventory();
         }
 
         var ready = Player.ReadyList.ToList();
