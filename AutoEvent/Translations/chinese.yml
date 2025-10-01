@@ -39,24 +39,24 @@ All Deathmatch:
 Among Us:
   starting_event: |-
     <b>{name}</b>
-    There are {time} seconds before the game starts. Selecting the <color=red><b>Impostors</b></color>.
-  you_are_impostor: 'You are the <color=red>Impostor</color>!'
-  you_are_crewmate: 'You are a <color=#00FFFF>Crewmate</color>!'
-  impostor_win: '<color=red>Impostors</color> have won!'
-  crewmate_win: '<color=#00FFFF>Crewmates</color> have won!'
-  killed_by_impostor: 'You were killed by an Impostor!'
-  kill_cooldown: 'You can''t kill for another {time} seconds!'
-  too_far: 'You are too far away to kill!'
+    游戏将在 {time} 秒后开始。正在选择 <color=red><b>内鬼</b></color>。
+  you_are_impostor: '你是 <color=red>内鬼</color>！'
+  you_are_crewmate: '你是 <color=#00FFFF>船员</color>！'
+  impostor_win: '<color=red>内鬼</color> 获胜了！'
+  crewmate_win: '<color=#00FFFF>船员</color> 获胜了！'
+  killed_by_impostor: '你被内鬼杀死了！'
+  kill_cooldown: '你需要再等待 {time} 秒才能杀人！'
+  too_far: '你离得太远，无法进行击杀！'
   voting_info: |-
     {reason}
-    You can vote by writing .vote <color> to the Console which you can open with ~ by default.
-    {time} seconds remaining.
-  meeting_called: 'A meeting has been called by {player}!'
-  death_body_reported: '<color=red>{deadPlayer}</color>''s body found by <color=yellow>{reportedPlayer}</color>!'
-  emergency_meetings_reached: 'You can''t call any more emergency meetings!'
-  meeting_cooldown: 'You can''t call a meeting for another {time} seconds!'
+    你可以输入 .vote <color> 来进行投票，默认情况下可通过 ~ 打开控制台。
+    剩余 {time} 秒。
+  meeting_called: '{player} 发起了一次紧急会议！'
+  death_body_reported: '<color=red>{deadPlayer}</color> 的尸体被 <color=yellow>{reportedPlayer}</color> 发现！'
+  emergency_meetings_reached: '你不能再召集紧急会议了！'
+  meeting_cooldown: '你需要再等待 {time} 秒才能召集会议！'
   name: 'Among Us'
-  description: 'The Impostor is among us.'
+  description: '内鬼就在我们之中。'
   command_name: 'amongus'
 Atomic Escape:
   before_start: |-
@@ -144,9 +144,6 @@ Counter-Strike:
   picked_up_bomb: 你捡起了炸弹!
   equipped_bomb: 你正在拿着炸弹!
   bomb_death_reason: 炸弹爆炸了
-  hint_cycle: |-
-    <size=30><i><b>{name}</b>
-    {kills}
   name: '反恐精英'
   description: '反恐精英与恐怖分子之间的对抗'
   command_name: 'cs'
