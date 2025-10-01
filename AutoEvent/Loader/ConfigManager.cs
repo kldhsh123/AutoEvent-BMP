@@ -20,7 +20,7 @@ public static class ConfigManager
     internal static Dictionary<string, string> LanguageByCountryCodeDictionary { get; } = new()
     {
         ["EN"] = "english",
-        ["HUN"] = "hungarian",
+        ["HU"] = "hungarian",
         ["CN"] = "chinese",
         ["FR"] = "french",
         ["DE"] = "german",
@@ -44,7 +44,7 @@ public static class ConfigManager
         LoadTranslations();
     }
 
-    internal static void LoadConfigs()
+    private static void LoadConfigs()
     {
         try
         {
@@ -92,7 +92,7 @@ public static class ConfigManager
     {
         try
         {
-            var translations = new Dictionary<string, object>();
+            Dictionary<string, object> translations;
 
             // If the translation file is not found, then create a new one.
             if (!File.Exists(TranslationPath))
@@ -100,11 +100,9 @@ public static class ConfigManager
                 var countryCode = "EN";
                 try
                 {
-                    using (var client = new WebClient())
-                    {
-                        var url = $"http://ipinfo.io/{Server.IpAddress}/country";
-                        countryCode = client.DownloadString(url).Trim();
-                    }
+                    using var client = new WebClient();
+                    var url = $"http://ipinfo.io/{Server.IpAddress}/country";
+                    countryCode = client.DownloadString(url).Trim();
                 }
                 catch (WebException)
                 {
@@ -124,11 +122,8 @@ public static class ConfigManager
             }
 
             // Move translations to each mini-games
-            foreach (var ev in AutoEvent.EventManager.Events)
+            foreach (var ev in AutoEvent.EventManager.Events.Where(_ => translations is not null))
             {
-                if (translations is null)
-                    continue;
-
                 if (!translations.TryGetValue(ev.Name, out var rawDeserializedTranslation))
                 {
                     LogManager.Warn($"[ConfigManager] {ev.Name} doesn't have translations");
@@ -161,16 +156,14 @@ public static class ConfigManager
 
     internal static Dictionary<string, object> LoadTranslationFromAssembly(string countryCode)
     {
-        Dictionary<string, object> translations;
-
         // Try to get a translation from an assembly
-        if (!TryGetTranslationFromAssembly(countryCode, TranslationPath, out translations))
+        if (!TryGetTranslationFromAssembly(countryCode, TranslationPath, out Dictionary<string, object> translations))
             translations = GenerateDefaultTranslations();
 
         return translations;
     }
 
-    internal static Dictionary<string, object> GenerateDefaultTranslations()
+    private static Dictionary<string, object> GenerateDefaultTranslations()
     {
         // Otherwise, create default translations from all mini-games.
         var translations = new Dictionary<string, object>();
@@ -202,25 +195,21 @@ public static class ConfigManager
         try
         {
             var assembly = Assembly.GetExecutingAssembly();
-            using (var stream = assembly.GetManifestResourceStream(resourceName))
+            using var stream = assembly.GetManifestResourceStream(resourceName);
+            if (stream == null)
             {
-                if (stream == null)
-                {
-                    LogManager.Warn($"[ConfigManager] The language '{language}' was not found in the assembly.");
-                    translationFile = default;
-                    return false;
-                }
-
-                using (var reader = new StreamReader(stream))
-                {
-                    var yaml = reader.ReadToEnd();
-                    translationFile = YamlConfigParser.Deserializer.Deserialize<T>(yaml);
-
-                    // Save the translation file
-                    File.WriteAllText(path, yaml);
-                    return true;
-                }
+                LogManager.Warn($"[ConfigManager] The language '{language}' was not found in the assembly.");
+                translationFile = default;
+                return false;
             }
+
+            using var reader = new StreamReader(stream);
+            var yaml = reader.ReadToEnd();
+            translationFile = YamlConfigParser.Deserializer.Deserialize<T>(yaml);
+
+            // Save the translation file
+            File.WriteAllText(path, yaml);
+            return true;
         }
         catch (Exception ex)
         {
@@ -231,7 +220,7 @@ public static class ConfigManager
         return false;
     }
 
-    public static void CopyProperties(this object target, object source)
+    private static void CopyProperties(this object target, object source)
     {
         var type = target.GetType();
         if (type != source.GetType())

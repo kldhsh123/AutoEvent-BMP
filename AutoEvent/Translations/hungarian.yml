@@ -13,7 +13,7 @@
     <color=#ffc0cb>{time}</color>
   all_die: |-
     <color=red>Death Party</color>
-    <color=yellow>Senki sem élte túl.(((</color>
+    <color=yellow>Senki sem élte túl. :(((</color>
     <color=#ffc0cb>{time}</color>
   name: 'Airstrike'
   description: 'Éld túl a fentről érkező gránátokat!'
@@ -34,30 +34,30 @@ All Deathmatch:
     Öléseid: <color=red>{count}</color></color>
     Játékidő - <color=#008000>{time}</color></i>
   name: 'Free For All'
-  description: 'Harcoljatok egymás ellen mindenki mindenki ellen módban.'
+  description: 'Harcoljatok egymás ellen mindenki mindenki ellen módban'
   command_name: 'dm'
 Among Us:
   starting_event: |-
     <b>{name}</b>
-    There are {time} seconds before the game starts. Selecting the <color=red><b>Impostors</b></color>.
-  you_are_impostor: 'You are the <color=red>Impostor</color>!'
-  you_are_crewmate: 'You are a <color=#00FFFF>Crewmate</color>!'
-  impostor_win: '<color=red>Impostors</color> have won!'
-  crewmate_win: '<color=#00FFFF>Crewmates</color> have won!'
-  killed_by_impostor: 'You were killed by an Impostor!'
-  kill_cooldown: 'You can''t kill for another {time} seconds!'
-  too_far: 'You are too far away to kill!'
+    A játék {time} másodperc múlva kezdődik. Az <color=red><b>Impostorok</b></color> kiválasztás alatt.
+  you_are_impostor: 'Te vagy az <color=red>Impostor</color>!'
+  you_are_crewmate: 'Te egy <color=#00FFFF>Crewmate</color> vagy!'
+  impostor_win: '<color=red>Impostorok</color> győztek!'
+  crewmate_win: '<color=#00FFFF>Crewmateek</color> győzött!'
+  killed_by_impostor: 'Egy Impostor megölt téged!'
+  kill_cooldown: 'Még {time} másodpercig nem ölhetsz!'
+  too_far: 'Túl messze vagy, nem tudod megölni!'
   voting_info: |-
     {reason}
-    You can vote by writing .vote <color> to the ClientConsole which you can open with ~ by default.
-    You can get the colors by opening the PlayerList with N.
-    {time} seconds remaining.
-  meeting_called: 'A meeting has been called by {player}!'
-  death_body_reported: '<color=red>{deadPlayer}</color>''s body found by <color=yellow>{reportedPlayer}</color>!'
-  emergency_meetings_reached: 'You can''t call any more emergency meetings!'
-  meeting_cooldown: 'You can''t call a meeting for another {time} seconds!'
+    A szavazáshoz írd be a .vote <color> parancsot a ClientConsole-ba, amit alapból a ~ gombbal nyithatsz meg.
+    A színeket a játékoslistában (N) találod.
+    Még {time} másodperc maradt.
+  meeting_called: '{player} összehívta a megbeszélést!'
+  death_body_reported: '<color=red>{deadPlayer}</color> holttestét <color=yellow>{reportedPlayer}</color> találta meg!'
+  emergency_meetings_reached: 'Már nem hívhatsz több vészmegbeszélést!'
+  meeting_cooldown: 'Még {time} másodpercig nem hívhatsz megbeszélést!'
   name: 'Among Us'
-  description: 'The Impostor is among us.'
+  description: 'Az Impostor köztünk van.'
   command_name: 'amongus'
 Atomic Escape:
   before_start: |-
@@ -71,7 +71,7 @@ Atomic Escape:
     {name}
     <color=red>{players} játékos menekült meg</color>
   name: 'Nuke Run'
-  description: 'Menekülj a létesítményből SCP-173-al!'
+  description: 'Menekülj a létesítményből SCP-173-al'
   command_name: 'escape'
 Battle:
   time_left: '<size=100><color=red>Csata kezdődik: {time}</color></size>'
@@ -229,9 +229,9 @@ Dodgeball:
     <color=#808080>Döntetlen</color>
     Idő: <color=red>{time}</color>
   redline: '<color=red>Nem léphetsz át a piros vonalon</color>'
-  knocked: '<color=red>'{killer}' kidobott téged</color>'
+  knocked: "<color=red>{killer} kidobott téged</color>"
   name: 'Kidobós'
-  description: 'Győzd le az ellenséget labdákkal.'
+  description: 'Győzd le az ellenséget labdákkal'
   command_name: 'dodge'
 FallDown:
   broadcast: |-
@@ -241,7 +241,7 @@ FallDown:
   winner: '<color=red>Győztes:</color> {winner}'
   died: '<color=red>Minden játékos meghalt</color>'
   name: 'Leesés'
-  description: 'Minden platform megsemmisül.'
+  description: 'Minden platform megsemmisül'
   command_name: 'fall'
 Football:
   red_team: |-
@@ -270,7 +270,7 @@ Gun Game:
     <color=#D71868><b><i>{name}</i></b></color>
     <color=yellow>A játék győztese: <color=green>{winner}</color></color>
   name: 'Gun Game'
-  description: 'Menő sigma skibidi gun game a MW19-ből ismert Shipment pályán (öcsi a sigma)'
+  description: 'Fegyververseny a MW19-ből ismert Shipment pályán'
   command_name: 'gungame'
 Knives of Death:
   cycle: |-
@@ -283,7 +283,7 @@ Knives of Death:
     <color=#D71868><b><i>{name}</i></b></color>
     <color=yellow>GYŐZTESEK: <color=#42AAFF>M.T.F.</color></color>
   name: 'Halálos Kések'
-  description: 'Játékosok késelnek egymás ellen a cs 1.6-ból ismert 35hp pályán. öcsi a daddy'
+  description: 'Játékosok késelnek egymás ellen a cs 1.6-ból ismert 35hp pályán.'
   command_name: 'knives'
 Musical Chairs:
   start: |-
@@ -332,7 +332,7 @@ Puzzle:
     Vége!
   died: '<color=red>Lávába estél</color>'
   name: 'Puzzle'
-  description: 'Juss fel a leggyorsabban a zőőőőőőőld színre'
+  description: 'Juss fel a leggyorsabban a megfelelő színű platformokra'
   command_name: 'puzzle'
 Race:
   cycle: |-
@@ -348,7 +348,7 @@ Race:
     Győztes: {player}
   no_survivors: '<color=red>Senki sem élte túl!</color>'
   name: 'Verseny'
-  description: 'Juss el a pálya végére a győzelemhez.'
+  description: 'Juss el a pálya végére a győzelemhez'
   command_name: 'race'
 Red Light Green Light:
   start: |-
@@ -438,7 +438,7 @@ Tag:
     A játéknak vége
     <color=yellow>Eddig tartott: <color=red>{time}</color></color>
   name: 'Fogócska'
-  description: 'El kell kapni az összes játékost a pályán, mert na'
+  description: 'El kell kapni az összes játékost a pályán'
   command_name: 'tag'
 Team Death-Match:
   cycle: |-
