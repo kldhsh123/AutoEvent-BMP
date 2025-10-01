@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text.Json;
@@ -31,7 +32,7 @@ public class AutoEvent : Plugin<Config>
     public override string Description =>
         "A plugin that allows you to play mini-games in SCP:SL. It includes a variety of games such as Spleef, Lava, Hide and Seek, Knives, and more. Each game has its own unique mechanics and rules, providing a fun and engaging experience for players.";
 
-    public override Version Version => new(9, 15, 0);
+    public override Version Version => new(9, 15, 0, 1);
     public override Version RequiredApiVersion => new(LabApiProperties.CompiledVersion);
 
     public static string BaseConfigPath { get; private set; }
@@ -145,10 +146,8 @@ public class AutoEvent : Plugin<Config>
             if (allReleasesDoc.RootElement.ValueKind == JsonValueKind.Array)
             {
                 DateTime? bestPublishedAt = null;
-                foreach (var rel in allReleasesDoc.RootElement.EnumerateArray())
+                foreach (var rel in allReleasesDoc.RootElement.EnumerateArray().Where(rel => rel.ValueKind == JsonValueKind.Object))
                 {
-                    if (rel.ValueKind != JsonValueKind.Object) continue;
-
                     var draft = rel.TryGetProperty("draft", out var draftProp) &&
                                 draftProp.ValueKind == JsonValueKind.True;
                     if (draft) continue;
@@ -165,12 +164,11 @@ public class AutoEvent : Plugin<Config>
                             publishedAt = dt;
                     }
 
-                    if (latestPre == null || (publishedAt.HasValue &&
-                                              (!bestPublishedAt.HasValue || publishedAt.Value > bestPublishedAt.Value)))
-                    {
-                        latestPre = rel;
-                        bestPublishedAt = publishedAt;
-                    }
+                    if (latestPre != null && (!publishedAt.HasValue ||
+                                              (bestPublishedAt.HasValue && publishedAt.Value <= bestPublishedAt.Value)))
+                        continue;
+                    latestPre = rel;
+                    bestPublishedAt = publishedAt;
                 }
             }
 
@@ -216,7 +214,7 @@ public class AutoEvent : Plugin<Config>
             if (t.StartsWith("v", StringComparison.OrdinalIgnoreCase))
                 t = t.Substring(1);
 
-            var cut = t.IndexOfAny(new[] { '-', '+' });
+            var cut = t.IndexOfAny(['-', '+']);
             if (cut >= 0)
                 t = t.Substring(0, cut);
 
