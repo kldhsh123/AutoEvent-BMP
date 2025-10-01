@@ -131,7 +131,7 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap
             } else if (adminToyBase.name == "VentObject")
                 VentObject = adminToyBase;
 
-        Impostors = Player.ReadyList.Where(p => !p.IsDummy).ToList();//Config.Impostors.GetPlayers();
+        Impostors = Config.Impostors.GetPlayers();
         var ready = Player.ReadyList.ToList();
         Crewmates = ready.Except(Impostors).ToList();
 
