@@ -249,6 +249,7 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap
             .ToList();
         LogManager.Debug(
             $"Max votes count: {maxVotes.Count}, max votes: {(maxVotes.Count > 0 ? maxVotes[0].Count : 0)}");
+        
         switch (maxVotes.Count)
         {
             case 0:
@@ -270,10 +271,7 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap
                     votedOut.Kill("Voted out");
                     votedOut.DisplayName = string.Empty;
                     TaskManager.ClearForPlayers([votedOut]);
-
-                    if (PlayerSkins.TryGetValue(votedOut.NetworkId, out var skin))
-                        NetworkServer.Destroy(skin);
-                    PlayerSkins.Remove(votedOut.NetworkId);
+                    
                     PlayerColors.Remove(votedOut.NetworkId);
                     Impostors.Remove(votedOut);
                     Crewmates.Remove(votedOut);
@@ -283,7 +281,6 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap
                             ? $"{votedOut.Nickname} was {(Impostors.Contains(votedOut) ? "an Impostor" : "not an Impostor")}."
                             : $"{votedOut.Nickname} was voted out.", 5);
                 }
-
                 break;
             }
         }
@@ -292,16 +289,23 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap
         foreach (var textToy in PlayerTextToys.Values)
             textToy.Destroy();
         PlayerTextToys.Clear();
-
-        foreach (var skin in PlayerSkins.Values.Where(skin => skin.name == "DeathSkin"))
-            NetworkServer.Destroy(skin);
-
+        LogManager.Debug("Voting ended, cleared votes and text toys");
         foreach (var player in Player.ReadyList)
         {
             if (Impostors.Contains(player)) 
                 player.AddItem(ItemType.GunCOM18);
 
             player.DisableEffect<Ensnared>();
+        }
+        foreach (var pair in PlayerSkins)
+        {
+            LogManager.Debug($"Checking skin for {pair.Key} name: {pair.Value.name}");
+            if (!pair.Value.name.Contains("DeathSkin")) continue;
+            var skin = pair.Value;
+            if (skin == null) continue;
+            LogManager.Debug($"Destroying death skin for {pair.Key}");
+            NetworkServer.Destroy(skin);
+            PlayerSkins.Remove(pair.Key);
         }
     }
 

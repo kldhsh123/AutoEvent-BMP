@@ -78,6 +78,12 @@ internal class Vote : ICommand, IUsageProvider
             return false;
         }
 
+        if (!votedPlayer.IsAlive)
+        {
+            response = "You cannot vote for a dead player.";
+            return false;
+        }
+        
         if (votedPlayer == player)
         {
             response = "You cannot vote for yourself.";

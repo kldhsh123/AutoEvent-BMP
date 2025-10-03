@@ -242,23 +242,33 @@ public class EventHandler(Plugin plugin)
             }
 
             Plugin.Instance.MeetingCalled = true;
-            foreach (var player in Player.ReadyList)
-            {
-                player.EnableEffect<Ensnared>();
-                player.ClearInventory();
-            }
-
             var ready = Player.ReadyList.ToList();
             var spawnCount = plugin.SpawnList.Count;
             for (var i = 0; i < ready.Count; i++)
             {
                 var player = ready[i];
-                player.DisableEffect<Ensnared>();
-                player.Position = plugin.SpawnList[i % spawnCount].transform.position;
-                player.EnableEffect<Ensnared>();
-
                 if (Plugin.Instance.MeetingButton == null) continue;
-                var direction = Plugin.Instance.MeetingButton.transform.position - player.Position;
+                
+                var spawnPos = plugin.SpawnList[i % spawnCount].transform.position;
+                var meetingPos = Plugin.Instance.MeetingButton.transform.position;
+                
+                if (!player.IsAlive)
+                {
+                    if (plugin.PlayerSkins.TryGetValue(player.NetworkId, out var skin) && skin.name.Contains("Death"))
+                    {
+                        skin.transform.position = spawnPos;
+                        var skinDirection = meetingPos - skin.transform.position;
+                        skin.transform.rotation =
+                            Quaternion.LookRotation(new Vector3(skinDirection.x, 0, skinDirection.z));
+                        continue;
+                    }
+                }
+                
+                player.ClearInventory();
+                player.Position = spawnPos;
+                player.EnableEffect<Ensnared>();
+                
+                var direction = meetingPos - player.Position;
                 player.Rotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
             }
             if (!plugin.PlayerColors.TryGetValue(ev.Player.NetworkId, out var color)) return;
@@ -282,23 +292,33 @@ public class EventHandler(Plugin plugin)
             if (Plugin.Instance.MeetingCalled) return;
 
             Plugin.Instance.MeetingCalled = true;
-            foreach (var player in Player.ReadyList)
-            {
-                player.EnableEffect<Ensnared>();
-                player.ClearInventory();
-            }
             
             var ready = Player.ReadyList.ToList();
             var spawnCount = plugin.SpawnList.Count;
             for (var i = 0; i < ready.Count; i++)
             {
                 var player = ready[i];
-                player.DisableEffect<Ensnared>();
-                player.Position = plugin.SpawnList[i % spawnCount].transform.position;
-                player.EnableEffect<Ensnared>();
-
                 if (Plugin.Instance.MeetingButton == null) continue;
-                var direction = Plugin.Instance.MeetingButton.transform.position - player.Position;
+                
+                var spawnPos = plugin.SpawnList[i % spawnCount].transform.position;
+                var meetingPos = Plugin.Instance.MeetingButton.transform.position;
+                
+                if (!player.IsAlive)
+                {
+                    if (plugin.PlayerSkins.TryGetValue(player.NetworkId, out var skin) && skin.name.Contains("Death"))
+                    {
+                        skin.transform.position = spawnPos;
+                        var skinDirection = meetingPos - skin.transform.position;
+                        skin.transform.rotation = Quaternion.LookRotation(new Vector3(skinDirection.x, 0, skinDirection.z));
+                        continue;
+                    }
+                }
+                
+                player.ClearInventory();
+                player.Position = spawnPos;
+                player.EnableEffect<Ensnared>();
+                
+                var direction = meetingPos - player.Position;
                 player.Rotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
             }
             Timing.RunCoroutine(plugin.BroadcastVotingCountdown(plugin.Translation.DeathBodyReported.Replace("{deadPlayer}", $"<color={color}>{deadPlayer.Nickname} {Plugin.GetColorTypeByHex(color)}</color>").Replace("{reportedPlayer}", $"<color={reportedColor}>{ev.Player.Nickname} {Plugin.GetColorTypeByHex(reportedColor)}</color>")), "BroadcastVotingCountdown");
