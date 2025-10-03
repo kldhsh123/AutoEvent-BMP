@@ -39,23 +39,22 @@ All Deathmatch:
 Among Us:
   starting_event: |-
     <b>{name}</b>
-    There are {time} seconds before the game starts. Selecting the <color=red><b>Impostors</b></color>.
-  you_are_impostor: 'You are the <color=red>Impostor</color>!'
-  you_are_crewmate: 'You are a <color=#00FFFF>Crewmate</color>!'
-  impostor_win: '<color=red>Impostors</color> have won!'
-  crewmate_win: '<color=#00FFFF>Crewmates</color> have won!'
-  killed_by_impostor: 'You were killed by an Impostor!'
-  kill_cooldown: 'You can''t kill for another {time} seconds!'
-  too_far: 'You are too far away to kill!'
+    Es gibt {time} Sekunden bevor das Spiel startet. Die <color=red><b>Verräter</b></color> werden ausgewählt.
+  you_are_impostor: 'Du bist der <color=red>Verräter</color>!'
+  you_are_crewmate: 'Du bist ein <color=#00FFFF>Besatzungsmitglied</color>!'
+  impostor_win: '<color=red>Verräter</color> haben gewonnen!'
+  crewmate_win: '<color=#00FFFF>Besatzungsmitglieder</color> haben gewonnen!'
+  killed_by_impostor: 'Du wurdest von einem Verräter getötet!'
+  kill_cooldown: 'Du kannst noch nicht für {time} Sekunden töten!'
+  too_far: 'Du bist viel zu weit weck um zu töten!'
   voting_info: |-
     {reason}
-    You can vote by writing .vote <color> to the ClientConsole which you can open with ~ by default.
-    You can get the colors by opening the PlayerList with N.
-    {time} seconds remaining.
-  meeting_called: 'A meeting has been called by {player}!'
-  death_body_reported: '<color=red>{deadPlayer}</color>''s body found by <color=yellow>{reportedPlayer}</color>!'
-  emergency_meetings_reached: 'You can''t call any more emergency meetings!'
-  meeting_cooldown: 'You can''t call a meeting for another {time} seconds!'
+    Du kannst abstimmen in dem du .vote <color> in die Konsole eingibst, was du mit ~ öffnen kannst.
+    {time} Sekunden verbleiben.
+  meeting_called: 'Eine Sitzung wurde von {player} gefordert!'
+  death_body_reported: '<color=red>{deadPlayer}</color>''s Leiche wurde von <color=yellow>{reportedPlayer}</color> gefunden!'
+  emergency_meetings_reached: 'Du kannst keine weitere Notfall-Sitzungen anfordern!'
+  meeting_cooldown: 'Du kannst keine Sitzung für {time} Sekunden anfordern!'
   name: 'Among Us'
   description: 'The Impostor is among us.'
   command_name: 'amongus'
