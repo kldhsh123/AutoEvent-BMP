@@ -336,7 +336,7 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap
                 {
                     LogManager.Debug($"Creating text toy for {player.Nickname}");
                     textToy = TextToy.Create(player.GameObject?.transform);
-                    textToy.GameObject.transform.localPosition += new Vector3(0, 3, 0);
+                    textToy.GameObject.transform.localPosition += new Vector3(0, 2, 0);
                     textToy.Rotation = Quaternion.Euler(0, 180, 0);
                     PlayerTextToys[player.NetworkId] = textToy;
                 }
