@@ -64,6 +64,11 @@ public class Config : EventConfig
                     Name = TaskName.CleanO2Filter, RoomName = RoomName.O2, Type = TaskType.Short,
                     Description = Plugin.Instance.Translation.CleanO2Filter
                 },
+                new Task
+                {
+                    Name = TaskName.StartReactor, RoomName = RoomName.Reactor, Type = TaskType.Long,
+                    Description = Plugin.Instance.Translation.StartReactor
+                },
                 /*new Task
                 {
                     Name = TaskName.EmptyChute, RoomName = RoomName.O2, Type = TaskType.Long, IsVisual = true,
@@ -74,18 +79,16 @@ public class Config : EventConfig
                     Name = TaskName.EmptyChute, RoomName = RoomName.Storage, Type = TaskType.Long, IsVisual = true,
                     Description = Plugin.Instance.Translation.EmptyChute
                 },
-                new Task { Name = Skeld.TaskName.InspectSample, RoomName = Skeld.RoomName.MedBay, Type = TaskType.Long, Description = "Inspect Sample" }, Special task
+                new Task { 
+                    Name = Skeld.TaskName.InspectSample, RoomName = Skeld.RoomName.MedBay, Type = TaskType.Long, 
+                    Description = "Inspect Sample" 
+                },
                 new Task
                 {
                     Name = TaskName.PrimeShields, RoomName = RoomName.Shields, Type = TaskType.Common, IsVisual = true,
                     Description = Plugin.Instance.Translation.PrimeShields
-                },*/
-                new Task
-                {
-                    Name = TaskName.StartReactor, RoomName = RoomName.Reactor, Type = TaskType.Long,
-                    Description = Plugin.Instance.Translation.StartReactor
                 },
-                /*new Task
+                new Task
                 {
                     Name = TaskName.SubmitScan, RoomName = RoomName.MedBay, Type = TaskType.Long, IsVisual = true,
                     Description = Plugin.Instance.Translation.SubmitScan
