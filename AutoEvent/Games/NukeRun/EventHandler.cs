@@ -2,8 +2,9 @@
 using LabApi.Events.Arguments.PlayerEvents;
 using LabApi.Events.Arguments.Scp173Events;
 using LabApi.Events.Arguments.ServerEvents;
+using PlayerRoles;
 
-namespace AutoEvent.Games.Escape;
+namespace AutoEvent.Games.NukeRun;
 
 public class EventHandler(Plugin plugin)
 {
@@ -15,7 +16,7 @@ public class EventHandler(Plugin plugin)
 
     public void OnJoined(PlayerJoinedEventArgs ev)
     {
-        ev.Player.GiveLoadout(plugin.Config.Scp173Loadout);
+        ev.Player.SetRole(plugin.Config.SpawnAsScp173 ? RoleTypeId.Scp173 : RoleTypeId.ClassD);
     }
 
     public static void OnPlacingTantrum(Scp173CreatingTantrumEventArgs ev)

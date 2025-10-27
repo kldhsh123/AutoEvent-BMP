@@ -5,20 +5,22 @@ using AutoEvent.Interfaces;
 using CustomPlayerEffects;
 using Interactables.Interobjects.DoorUtils;
 using LabApi.Events.Handlers;
+using LabApi.Features.Enums;
 using LabApi.Features.Wrappers;
 using MapGeneration;
 using MEC;
+using PlayerRoles;
 using UnityEngine;
 using ElevatorDoor = Interactables.Interobjects.ElevatorDoor;
 
-namespace AutoEvent.Games.Escape;
+namespace AutoEvent.Games.NukeRun;
 
 public class Plugin : Event<Config, Translation>, IEventSound
 {
-    public override string Name { get; set; } = "Atomic Escape";
-    public override string Description { get; set; } = "Escape from the facility behind SCP-173 at supersonic speed!";
-    public override string Author { get; set; } = "RisottoMan";
-    public override string CommandName { get; set; } = "escape";
+    public override string Name { get; set; } = "Nuke Run";
+    public override string Description { get; set; } = "Escape from the facility before the Nuke explodes!";
+    public override string Author { get; set; } = "RisottoMan && MedveMarci";
+    public override string CommandName { get; set; } = "nukerun";
     private EventHandler EventHandler { get; set; }
 
     public SoundInfo SoundInfo { get; set; } = new()
@@ -63,15 +65,21 @@ public class Plugin : Event<Config, Translation>, IEventSound
         };
         foreach (var player in Player.ReadyList)
         {
-            player.GiveLoadout(Config.Scp173Loadout);
+            player.SetRole(Config.SpawnAsScp173 ? RoleTypeId.Scp173 : RoleTypeId.ClassD);
+            if (!Config.SpawnAsScp173) continue;
             player.Position = startPos.transform.position;
-            player.EnableEffect<Ensnared>(1, 10);
-            player.EnableEffect<MovementBoost>(50);
+            player.EnableEffect<Ensnared>(1, 11);
         }
+        Object.Destroy(startPos);
 
-        AlphaWarheadController.Singleton.CurScenario.AdditionalTime = Config.EscapeResumeTime;
+        Warhead.Scenario = Warhead.StartScenarios.First();
+        Warhead.DetonationTime = Config.EscapeDurationTime;
         Warhead.Start();
         Warhead.IsLocked = true;
+        Warhead.OpenBlastDoors();
+        foreach (var door in Door.List.Where(door =>
+                     door.DoorName is DoorName.EzGateA or DoorName.EzGateB or DoorName.Lcz173Gate))
+            door.IsOpened = true;
     }
 
     protected override void ProcessFrame()
@@ -83,7 +91,7 @@ public class Plugin : Event<Config, Translation>, IEventSound
 
     protected override IEnumerator<float> BroadcastStartCountdown()
     {
-        for (var time = 10; time > 0; time--)
+        for (var time = 11; time > 0; time--)
         {
             Extensions.ServerBroadcast(
                 Translation.BeforeStart.Replace("{name}", Name).Replace("{time}", time.ToString()), 1);
@@ -93,13 +101,6 @@ public class Plugin : Event<Config, Translation>, IEventSound
 
     protected override void OnFinished()
     {
-        foreach (var player in Player.ReadyList)
-        {
-            player.EnableEffect<Flashed>(1, 1);
-
-            if (player.Room?.Name != RoomName.Outside) player.Kill("You failed to escape in time!");
-        }
-
         var playerAlive = Player.ReadyList.Count(x => x.IsAlive).ToString();
         Extensions.ServerBroadcast(Translation.End.Replace("{name}", Name).Replace("{players}", playerAlive), 10);
     }
@@ -107,12 +108,14 @@ public class Plugin : Event<Config, Translation>, IEventSound
     protected override void OnCleanup()
     {
         Warhead.IsLocked = false;
+        Warhead.Start();
+        Warhead.Stop();
         foreach (var door in DoorVariant.AllDoors.Where(door => door is not ElevatorDoor))
         {
-            door.NetworkTargetState = true;
-            door.ServerChangeLock(DoorLockReason.Warhead, true);
+            door.NetworkTargetState = false;
+            door.ServerChangeLock(DoorLockReason.Warhead, false);
         }
-
-        Warhead.Stop();
+        Warhead.OpenBlastDoors();
+        Warhead.Scenario = Warhead.StartScenarios.First();
     }
 }
