@@ -4,6 +4,7 @@ using System.Linq;
 using AutoEvent.API;
 using AutoEvent.Games.AmongUs.Features;
 using CustomPlayerEffects;
+using InventorySystem.Items.Scp1509;
 using LabApi.Events.Arguments.PlayerEvents;
 using LabApi.Features.Wrappers;
 using LabApiExtensions.FakeExtension;
@@ -130,8 +131,18 @@ public class EventHandler(Plugin plugin)
 
     internal void OnPlayerHurting(PlayerHurtingEventArgs ev)
     {
-        if (ev.Attacker == null || !plugin.Impostors.Contains(ev.Attacker)) return;
+        if (ev.Attacker == null) return;
+        if (ev.DamageHandler is not Scp1509DamageHandler) return;
+        if (plugin.KillCooldowns.TryGetValue(ev.Attacker, out var time))
+        {
+            ev.IsAllowed = false;
+            if (time <= DateTime.UtcNow) return;
+            ev.Player.SendHint(
+                plugin.Translation.KillCooldown.Replace("{time}", (time - DateTime.UtcNow).Seconds.ToString()));
+            return;
+        }
         if (plugin.Impostors.Contains(ev.Player)) return;
+        if (!plugin.Impostors.Contains(ev.Attacker)) return;
         ev.IsAllowed = false;
         if (Vector3.Distance(ev.Player.Position, ev.Attacker.Position) > plugin.Config.KillDistance)
         {
@@ -169,15 +180,6 @@ public class EventHandler(Plugin plugin)
         ev.Player.Kill(plugin.Translation.KilledByImpostor);
         TaskManager.ClearForPlayers([ev.Player]);
         plugin.KillCooldowns[ev.Attacker] = DateTime.UtcNow.AddSeconds(plugin.Config.KillCooldown);
-    }
-
-    internal void OnShooting(PlayerShootingWeaponEventArgs ev)
-    {
-        if (!plugin.KillCooldowns.TryGetValue(ev.Player, out var time)) return;
-        if (time <= DateTime.UtcNow) return;
-        ev.IsAllowed = false;
-        ev.Player.SendHint(
-            plugin.Translation.KillCooldown.Replace("{time}", (time - DateTime.UtcNow).Seconds.ToString()));
     }
 
     internal void OnPlayerInteractedToy(PlayerInteractedToyEventArgs ev)

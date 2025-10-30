@@ -6,6 +6,7 @@ using System.Text;
 using AdminToys;
 using AutoEvent.API;
 using AutoEvent.API.Enums;
+using AutoEvent.Events;
 using AutoEvent.Games.AmongUs.Configs;
 using AutoEvent.Games.AmongUs.Features;
 using AutoEvent.Games.AmongUs.Skeld;
@@ -70,7 +71,6 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap
         _eventHandler = new EventHandler(this);
         PlayerEvents.SearchedToy += EventHandler.OnPlayerSearchedToy;
         PlayerEvents.Hurting += _eventHandler.OnPlayerHurting;
-        PlayerEvents.ShootingWeapon += _eventHandler.OnShooting;
         PlayerEvents.ChangingItem += _eventHandler.OnPlayerChangingItem;
         PlayerEvents.InteractedToy += _eventHandler.OnPlayerInteractedToy;
         PlayerEvents.Left += _eventHandler.OnPlayerLeft;
@@ -80,7 +80,6 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap
     {
         PlayerEvents.SearchedToy -= EventHandler.OnPlayerSearchedToy;
         PlayerEvents.Hurting -= _eventHandler.OnPlayerHurting;
-        PlayerEvents.ShootingWeapon -= _eventHandler.OnShooting;
         PlayerEvents.ChangingItem -= _eventHandler.OnPlayerChangingItem;
         PlayerEvents.InteractedToy -= _eventHandler.OnPlayerInteractedToy;
         PlayerEvents.Left -= _eventHandler.OnPlayerLeft;
@@ -205,7 +204,7 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap
             impostor.DisableEffect<Ensnared>();
             impostor.DisableEffect<HeavyFooted>();
             impostor.GetEffect<FogControl>()!.Intensity = 3;
-            impostor.AddItem(ItemType.GunCOM18);
+            impostor.AddItem(ItemType.SCP1509);
             impostor.DestroyNetworkIdentity(VentObject.netIdentity);
             foreach (var invisibleInteractable in TaskToyList) invisibleInteractable.SetFakeIsLocked(impostor, true);
         }
@@ -334,7 +333,7 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap
         foreach (var player in Player.ReadyList)
         {
             if (Impostors.Contains(player))
-                player.AddItem(ItemType.GunCOM18);
+                player.AddItem(ItemType.SCP1509);
 
             player.DisableEffect<Ensnared>();
         }
