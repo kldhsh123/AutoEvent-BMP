@@ -14,10 +14,9 @@ public class Translation : EventTranslation
     public string KilledByImpostor { get; set; } = "You were killed by an Impostor!";
 
     public string KillCooldown { get; set; } = "You can't kill for another {time} seconds!";
-    public string TooFar { get; set; } = "You are too far away to kill!";
 
     public string VotingInfo { get; set; } =
-        "{reason}\nYou can vote by writing .vote <color> to the Console which you can open with ~ by default.\n{time} seconds remaining.";    
+        "{reason}\nYou can vote by writing .vote <color/name> to the Console which you can open with ~ by default.\n{time} seconds remaining.";    
     public string DiscussionInfo { get; set; } =
         "{reason}\nDiscussion time! You can't chat with other players.\n{time} seconds remaining, soon you will can speak and vote.";
 
@@ -39,4 +38,14 @@ public class Translation : EventTranslation
     public string AcceptDivertPower { get; set; } = "Accept Divert Power";
     public string DownloadData { get; set; } = "Download Data";
     public string UploadData { get; set; } = "Upload Data";
+    public string NoVotes { get; set; } = "No votes";
+    public string Vote { get; set; } = "vote";
+    public string NoOneVotedOut { get; set; } = "No one was voted out.";
+    public string ItsATie { get; set; } = "It's a tie!";
+    public string DeathMessage { get; set; } = "Voted out.";
+    public string VotedOut { get; set; } = "{player} was voted out.";
+    public string Tasks { get; set; } = "Tasks";
+    public string DidntVote { get; set; } = "Didn't vote";
+    public string WasAnImpostor { get; set; } = "{player} was an Impostor.";
+    public string WasNotAnImpostor { get; set; } = "{player} was not an Impostor.";
 }

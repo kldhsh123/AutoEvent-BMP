@@ -6,7 +6,6 @@ using System.Text;
 using AdminToys;
 using AutoEvent.API;
 using AutoEvent.API.Enums;
-using AutoEvent.Events;
 using AutoEvent.Games.AmongUs.Configs;
 using AutoEvent.Games.AmongUs.Features;
 using AutoEvent.Games.AmongUs.Skeld;
@@ -279,7 +278,6 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap
         }
 
         MeetingCalled = false;
-        Extensions.ServerBroadcast("Voting ended", 5);
         var maxVotes = PlayerVotes.Values
             .GroupBy(v => v)
             .OrderByDescending(g => g.Count())
@@ -291,23 +289,23 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap
         switch (maxVotes.Count)
         {
             case 0:
-                Extensions.ServerBroadcast("No one was voted out.", 5);
+                Extensions.ServerBroadcast($"{Translation.NoOneVotedOut}", 5);
                 break;
             case > 1 when maxVotes[0].Count == maxVotes[1].Count:
-                Extensions.ServerBroadcast("It's a tie! No one was voted out.", 5);
+                Extensions.ServerBroadcast($"{Translation.ItsATie} {Translation.NoOneVotedOut}", 5);
                 break;
             default:
             {
                 if (maxVotes[0].Id == 0)
                 {
-                    Extensions.ServerBroadcast("No one was voted out.", 5);
+                    Extensions.ServerBroadcast($"{Translation.NoOneVotedOut}", 5);
                     break;
                 }
 
                 var votedOut = Player.Get(maxVotes[0].Id);
                 if (votedOut != null)
                 {
-                    votedOut.Kill("Voted out");
+                    votedOut.Kill($"{Translation.DeathMessage}");
                     votedOut.DisplayName = string.Empty;
                     TaskManager.ClearForPlayers([votedOut]);
 
@@ -315,10 +313,23 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap
                     Impostors.Remove(votedOut);
                     Crewmates.Remove(votedOut);
                     KillCooldowns.Remove(votedOut);
-                    Extensions.ServerBroadcast(
-                        Config.ConfirmEjects
-                            ? $"{votedOut.Nickname} was {(Impostors.Contains(votedOut) ? "an Impostor" : "not an Impostor")}."
-                            : $"{votedOut.Nickname} was voted out.", 5);
+
+                    if (Config.ConfirmEjects)
+                    {
+                        if (Impostors.Contains(votedOut))
+                        {
+                            Extensions.ServerBroadcast($"{Translation.WasAnImpostor.Replace("{player}", votedOut.Nickname)}", 5);
+                        }
+                        else
+                        {
+                            Extensions.ServerBroadcast($"{Translation.WasNotAnImpostor.Replace("{player}", votedOut.Nickname)}", 5);
+                        }
+                    }
+                    else
+                    {
+                        Extensions.ServerBroadcast(
+                            $"{Translation.VotedOut.Replace("{player}", votedOut.Nickname)}", 5);
+                    }
                 }
 
                 break;
@@ -371,11 +382,11 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap
                 if (votes.Count > 0)
                 {
                     text = Config.AnonymousVotes
-                        ? $"{votes.Count} vote{(votes.Count > 1 ? "s" : "")}"
-                        : $"{string.Join(", ", votes.Select(id => Player.Get(id)?.Nickname ?? id.ToString()))}\n{votes.Count} vote{(votes.Count > 1 ? "s" : "")}";
+                        ? $"{votes.Count} {Translation.Vote}"
+                        : $"{string.Join(", ", votes.Select(id => Player.Get(id)?.Nickname ?? id.ToString()))}\n{votes.Count} {Translation.Vote}";
                 }
                 else
-                    text = "No votes";
+                    text = Translation.NoVotes;
 
                 var didntVote = Impostors.Concat(Crewmates)
                     .Where(p => !PlayerVotes.ContainsKey(p.NetworkId) || PlayerVotes[p.NetworkId] == 0)
@@ -383,7 +394,7 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap
                 var hintText = text;
                 if (didntVote.Count > 0)
                 {
-                    hintText += "\n\nDidn't vote:\n";
+                    hintText += $"\n{Translation.DidntVote}:\n";
                     hintText += string.Join(", ", didntVote.Select(p => PlayerColors.TryGetValue(p.NetworkId, out var hex) ? (
                         $"<color={hex}>{p.DisplayName}</color>").Replace("*", "") : p.DisplayName.Replace("*", "")));
                 }
@@ -403,7 +414,7 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap
         {
             if (!TaskManager.TryGet(player, out var tm)) continue;
             var sb = new StringBuilder();
-            sb.AppendLine("Tasks:");
+            sb.AppendLine($"{Translation.Tasks}:");
             foreach (var mt in tm.Tasks)
             {
                 var hasStages = mt.StageTasks is { Count: > 0 };
@@ -437,7 +448,7 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap
                 }
                 else
                 {
-                    var description = mt.Description.Replace("%roomName%", mt.RoomName.ToString());
+                    var description = mt.Description.Replace("{roomName}", mt.RoomName.ToString());
                     var line = $"{mt.RoomName}: {description}";
                     if (isCompleted)
                         line = $"<color=green>{line}</color>";
