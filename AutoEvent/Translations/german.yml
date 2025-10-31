@@ -49,7 +49,7 @@ Among Us:
   too_far: 'Du bist viel zu weit weck um zu töten!'
   voting_info: |-
     {reason}
-    Du kannst abstimmen in dem du .vote <color> in die Konsole eingibst, was du mit ~ öffnen kannst.
+    Du kannst abstimmen in dem du .vote <color/name/skip> in die Konsole eingibst, was du mit ~ öffnen kannst.
     {time} Sekunden verbleiben.
   meeting_called: 'Eine Sitzung wurde von {player} gefordert!'
   death_body_reported: '<color=red>{deadPlayer}</color>''s Leiche wurde von <color=yellow>{reportedPlayer}</color> gefunden!'

@@ -49,7 +49,7 @@ Among Us:
   too_far: '你离得太远，无法进行击杀！'
   voting_info: |-
     {reason}
-    你可以输入 .vote <color> 来进行投票，默认情况下可通过 ~ 打开控制台
+    你可以输入 .vote <color/name/skip> 来进行投票，默认情况下可通过 ~ 打开控制台
     剩余 {time} 秒
   discussion_info: |-
     {reason}

@@ -29,7 +29,7 @@ internal class Vote : ICommand, IUsageProvider
 
         if (arguments.Count != 1)
         {
-            response = "Usage: .vote <color>";
+            response = "Usage: .vote <color/name/skip>";
             return false;
         }
 
@@ -49,7 +49,7 @@ internal class Vote : ICommand, IUsageProvider
 
         var colorName = arguments.At(0);
 
-        if (string.Equals(colorName, "none", StringComparison.OrdinalIgnoreCase))
+        if (string.Equals(colorName, "none", StringComparison.OrdinalIgnoreCase) || string.Equals(colorName, "skip", StringComparison.OrdinalIgnoreCase))
         {
             Plugin.Instance.PlayerVotes[player.NetworkId] = 0;
             response = "You voted for no one.";

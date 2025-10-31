@@ -16,7 +16,7 @@ public class Translation : EventTranslation
     public string KillCooldown { get; set; } = "You can't kill for another {time} seconds!";
 
     public string VotingInfo { get; set; } =
-        "{reason}\nYou can vote by writing .vote <color/name> to the Console which you can open with ~ by default.\n{time} seconds remaining.";    
+        "{reason}\nYou can vote by writing .vote <color/name/skip> to the Console which you can open with ~ by default.\n{time} seconds remaining.";    
     public string DiscussionInfo { get; set; } =
         "{reason}\nDiscussion time! You can't chat with other players.\n{time} seconds remaining, soon you will can speak and vote.";
 
