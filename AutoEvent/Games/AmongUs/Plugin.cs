@@ -316,14 +316,10 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap
 
                     if (Config.ConfirmEjects)
                     {
-                        if (Impostors.Contains(votedOut))
-                        {
-                            Extensions.ServerBroadcast($"{Translation.WasAnImpostor.Replace("{player}", votedOut.Nickname)}", 5);
-                        }
-                        else
-                        {
-                            Extensions.ServerBroadcast($"{Translation.WasNotAnImpostor.Replace("{player}", votedOut.Nickname)}", 5);
-                        }
+                        Extensions.ServerBroadcast(
+                            Impostors.Contains(votedOut)
+                                ? $"{Translation.WasAnImpostor.Replace("{player}", votedOut.Nickname)}"
+                                : $"{Translation.WasNotAnImpostor.Replace("{player}", votedOut.Nickname)}", 5);
                     }
                     else
                     {
@@ -351,8 +347,6 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap
 
         foreach (var pair in PlayerSkins)
         {
-            LogManager.Debug($"Checking skin for {pair.Key} name: {pair.Value.name}");
-            if (!pair.Value.name.Contains("DeathSkin")) continue;
             var skin = pair.Value;
             if (skin == null) continue;
             LogManager.Debug($"Destroying death skin for {pair.Key}");
