@@ -182,7 +182,14 @@ public class Plugin : Event<Config, Translation>, IEventSound, IEventMap
 
         else
         {
-            var selectedColor = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f), 1f);
+            var palette = new[]
+            {
+                Color.black, Color.blue, Color.cyan, Color.gray, 
+                Color.green, Color.magenta, Color.red, Color.white, 
+                Color.yellow
+            };
+
+            var selectedColor = palette[Random.Range(0, palette.Length)];
 
             foreach (var colorIndicator in _colorIndicators)
                 colorIndicator.GetComponent<PrimitiveObjectToy>().NetworkMaterialColor = selectedColor;
@@ -190,7 +197,7 @@ public class Plugin : Event<Config, Translation>, IEventSound, IEventMap
             foreach (var platform in _platforms)
                 platform.GetComponent<PrimitiveObjectToy>().NetworkMaterialColor =
                     _fallingPlatforms.Contains(platform)
-                        ? new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f), 1f)
+                        ? palette.Where(c => c != selectedColor).OrderBy(c => Random.value).First()
                         : selectedColor;
         }
 
