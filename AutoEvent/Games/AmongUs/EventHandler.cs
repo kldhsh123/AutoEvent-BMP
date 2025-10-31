@@ -33,7 +33,6 @@ public class EventHandler(Plugin plugin)
         return true;
     }
 
-    //todo: Sabotages, make admin work
     public static void OnPlayerSearchedToy(PlayerSearchedToyEventArgs ev)
     {
         var name = ev.Interactable.GameObject.name;
@@ -61,6 +60,12 @@ public class EventHandler(Plugin plugin)
             LogManager.Debug(
                 $"[OnPlayerSearchedToy] Found regular task '{task.Name}' in '{task.RoomName}' (isDone={task.IsDone})");
             task.IsDone = true;
+            if (task.IsVisual)
+            {
+                var animator = ev.Interactable.GameObject.GetComponent<Animator>();
+                if (animator != null)
+                    animator.Play($"{task.Name}Task");
+            }
             LogManager.Debug("[OnPlayerSearchedToy] Marked task done. Searching for next regular task...");
             var nextTask = taskManager.Tasks.FirstOrDefault(t =>
                 (string.IsNullOrEmpty(tName) || t.Name.ToString() == tName) && t.RoomName.ToString() == room &&
