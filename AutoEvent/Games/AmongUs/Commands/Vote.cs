@@ -2,6 +2,7 @@
 using System.Linq;
 using CommandSystem;
 using LabApi.Features.Wrappers;
+using Utils;
 
 namespace AutoEvent.Games.AmongUs;
 
@@ -58,11 +59,32 @@ internal class Vote : ICommand, IUsageProvider
         if (!Enum.TryParse(colorName, true, out Misc.PlayerInfoColorTypes colorType) ||
             !Misc.AllowedColors.TryGetValue(colorType, out var colorHex))
         {
-            response = "Invalid color.";
-            return false;
-        }
-        LogManager.Debug(colorHex);
+            var referenceHubList = RAUtils.ProcessPlayerIdOrNamesList(arguments, 0, out string[] _);
+            
+            if (referenceHubList.Count == 0)
+            {
+                response = "Invalid player name.";
+                return false;
+            }
 
+            var targetPlayer = Player.Get(referenceHubList[0]);
+            if (targetPlayer == null)
+            {
+                response = "Player or color not found.";
+                return false;
+            }
+
+            if (!Plugin.Instance.PlayerColors.TryGetValue(targetPlayer.NetworkId, out var targetColorHex))
+            {
+                response = "The player with that name was not found.";
+                return false;
+            }
+
+            colorHex = targetColorHex;
+        }
+        
+        LogManager.Debug(colorHex);
+        
         var valueColor = (from playerColor in Plugin.Instance.PlayerColors where playerColor.Value.Equals(colorHex, StringComparison.OrdinalIgnoreCase) select playerColor.Key).FirstOrDefault();
 
         if (valueColor == 0)
