@@ -66,13 +66,13 @@ public class Plugin : Event<Config, Translation>, IEventMap, IEventSound
     protected override void UnregisterEvents()
     {
         PlayerEvents.SearchedToy -= _eventHandler.OnSearchedToy;
+        PlayerEvents.SearchingToy -= EventHandler.OnSearchingToy;
+        PlayerEvents.SearchToyAborted -= EventHandler.OnSearchToyAborted;
         PlayerEvents.UsingItem -= EventHandler.OnUsingItem;
         PlayerEvents.UsedItem -= _eventHandler.OnUsedItem;
         PlayerEvents.PickingUpItem -= _eventHandler.OnPickingUpItem;
-        PlayerEvents.CancelledUsingItem -= EventHandler.OnCancelledUsingItem;
         PlayerEvents.ChangedItem -= _eventHandler.OnChangedItemEvent;
-        PlayerEvents.SearchingToy += EventHandler.OnSearchingToy;
-        PlayerEvents.SearchToyAborted += EventHandler.OnSearchToyAborted;
+        PlayerEvents.CancelledUsingItem -= EventHandler.OnCancelledUsingItem;
         PlayerEvents.DroppedItem -= _eventHandler.OnDroppedItem;
         PlayerEvents.SearchingPickup -= EventHandler.OnSearchingPickup;
         PlayerEvents.Cuffing -= EventHandler.OnCuffing;
