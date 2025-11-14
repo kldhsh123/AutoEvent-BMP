@@ -50,6 +50,11 @@ public class EventHandler
                 statsAttacker.Kill++;
                 GetWeaponForPlayer(ev.Attacker, true);
             }
+
+            if (ev.Attacker.CurrentItem is JailbirdItem jailbirdItem)
+            {
+                jailbirdItem.Base.TotalChargesPerformed = 0;
+            }
         }
 
         if (ev.Player == null) return;
