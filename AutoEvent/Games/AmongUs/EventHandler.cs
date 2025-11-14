@@ -257,6 +257,17 @@ public class EventHandler(Plugin plugin)
                 player.Position = spawnPos;
                 player.EnableEffect<Ensnared>();
                 
+                if (!player.IsAlive)
+                {
+                    if (plugin.PlayerSkins.TryGetValue(player.NetworkId, out var skin) && skin.name.Contains("Death"))
+                    {
+                        skin.transform.position = spawnPos;
+                        var skinDirection = meetingPos - skin.transform.position;
+                        skin.transform.rotation = Quaternion.LookRotation(new Vector3(skinDirection.x, 0, skinDirection.z));
+                        continue;
+                    }
+                }
+                
                 var direction = meetingPos - player.Position;
                 player.Rotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
             }

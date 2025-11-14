@@ -52,7 +52,7 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap
     internal Dictionary<uint, GameObject> PlayerSkins { get; private set; }
     internal Dictionary<uint, uint> PlayerVotes { get; private set; }
     internal Dictionary<uint, string> PlayerColors { get; private set; }
-    internal Dictionary<uint, TextToy> PlayerTextToys { get; set; }
+    internal Dictionary<uint, TextToy> PlayerTextToys { get; private set; }
     internal InvisibleInteractableToy MeetingButton { get; private set; }
     internal Dictionary<Player, DateTime> KillCooldowns { get; set; } = new();
     internal Dictionary<Player, int> PlayerMeetings { get; set; } = new();
@@ -345,13 +345,12 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap
             player.DisableEffect<Ensnared>();
         }
 
-        foreach (var pair in PlayerSkins)
+        foreach (var pair in PlayerSkins.Where(skin => skin.Value.name.Contains("DeathSkin")))
         {
             var skin = pair.Value;
             if (skin == null) continue;
             LogManager.Debug($"Destroying death skin for {pair.Key}");
             NetworkServer.Destroy(skin);
-            PlayerSkins.Remove(pair.Key);
         }
     }
 
