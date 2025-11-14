@@ -164,9 +164,9 @@ public class Plugin : Event<Config, Translation>, IEventMap, IEventSound
         var ctCount = Player.ReadyList.Count(r => r.IsNTF);
         var tCount = Player.ReadyList.Count(r => r.IsChaos);
 
-        return !((tCount > 0 || BombState == BombState.Planted) &&
+        return !(RoundTime.TotalSeconds > 0 &&
                  ctCount > 0 &&
-                 RoundTime.TotalSeconds != 0);
+                 (tCount > 0 || BombState == BombState.Planted));
     }
 
     protected override void ProcessFrame()
@@ -253,7 +253,12 @@ public class Plugin : Event<Config, Translation>, IEventMap, IEventSound
         }
         else if (ctCount == 0 && tCount == 0)
         {
-            text = Translation.Draw;
+            if (BombState == BombState.Planted)
+            {
+                text = Translation.TerroristWin;
+                Extensions.PlayAudio("TWin.ogg");
+            } else 
+                text = Translation.Draw;
         }
         else
         {
