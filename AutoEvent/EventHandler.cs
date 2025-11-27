@@ -164,7 +164,7 @@ internal class EventHandler : CustomEventsHandler
         try
         {
             var currentVersion = AutoEvent.Singleton.Version;
-            _ = Task.Run(() => AutoEvent.CheckForUpdatesAsync(currentVersion));
+            _ = Task.Run(() => VersionManager.CheckForUpdatesAsync(currentVersion));
         }
         catch (Exception ex)
         {

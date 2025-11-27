@@ -24,14 +24,13 @@ public class Translation : EventTranslation
     public string DeathBodyReported { get; set; } = "{deadPlayer}'s body found by {reportedPlayer}!";
     public string EmergencyMeetingsReached { get; set; } = "You can't call any more emergency meetings!";
     public string MeetingCooldown { get; set; } = "You can't call a meeting for another {time} seconds!";
+    public string CannotCallMeetingDuringSabotage { get; set; } = "You cannot call an emergency meeting during this sabotage!";
     
     public string CalibrateDistributor { get; set; } = "Calibrate Distributor";
     public string CharCourse { get; set; } = "Chart Course";
     public string CleanO2Filter { get; set; } = "Clean O2 Filter";
     public string EmptyChute { get; set; } = "Empty Chute";
-    public string PrimeShields { get; set; } = "Prime Shields";
     public string StartReactor { get; set; } = "Start Reactor";
-    public string SubmitScan { get; set; } = "Submit Scan";
     public string FixWiring { get; set; } = "Fix Wiring";
     public string AlignEngineOutput { get; set; } = "Align Engine Output";
     public string DivertPowerTo { get; set; } = "Divert Power to {roomName}";
@@ -48,4 +47,6 @@ public class Translation : EventTranslation
     public string DidntVote { get; set; } = "Didn't vote";
     public string WasAnImpostor { get; set; } = "{player} was an Impostor.";
     public string WasNotAnImpostor { get; set; } = "{player} was not an Impostor.";
+    public string CommsSabotaged { get; set; } = "Comms Sabotaged!";
+    public string ReactorMeltdown { get; set; } = "Reactor Meltdown in {time} seconds!";
 }

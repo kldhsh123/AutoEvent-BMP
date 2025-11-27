@@ -1,12 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 using AutoEvent.API;
-using AutoEvent.Games.AmongUs.Features;
-using AutoEvent.Games.AmongUs.Skeld;
 using AutoEvent.Interfaces;
 using CustomPlayerEffects;
 using PlayerRoles;
-using YamlDotNet.Serialization;
 
 namespace AutoEvent.Games.AmongUs.Configs;
 
@@ -28,6 +25,7 @@ public class Config : EventConfig
     public RoleCount Impostors { get; set; } = new() { MinimumPlayers = 1, MaximumPlayers = 3, PlayerPercentage = 10 };
 
     public float KillCooldown { get; set; } = 45f;
+    public float SabotageCooldown { get; set; } = 45f;
 
     public int EmergencyMeetings { get; set; } = 1;
     public int EmergencyCooldown { get; set; } = 10;
