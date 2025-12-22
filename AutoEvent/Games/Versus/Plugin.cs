@@ -154,8 +154,7 @@ public class Plugin : Event<Config, Translation>, IEventSound, IEventMap
 
         if (Scientist is null)
         {
-            if (ClassD is not null)
-                ClassD.Heal(100);
+            ClassD?.Heal(100);
 
             _eventState = EventState.ChooseScientist;
             return;
@@ -163,8 +162,7 @@ public class Plugin : Event<Config, Translation>, IEventSound, IEventMap
 
         if (ClassD is null)
         {
-            if (Scientist is not null)
-                Scientist.Heal(100);
+            Scientist?.Heal(100);
 
             _eventState = EventState.ChooseClassD;
             return;
@@ -207,6 +205,10 @@ public class Plugin : Event<Config, Translation>, IEventSound, IEventMap
 
         End:
         chosenPlayer.Position = _teleports.ElementAt(value).transform.position;
+        if (Scientist is not null)
+            Scientist.Position = _teleports.ElementAt(0).transform.position;
+        if (ClassD is not null)
+            ClassD.Position = _teleports.ElementAt(1).transform.position;
         chosenPlayer.Heal(100);
         _eventState = EventState.Waiting;
         return chosenPlayer;

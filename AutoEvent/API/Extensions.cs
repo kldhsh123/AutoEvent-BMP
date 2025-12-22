@@ -204,7 +204,7 @@ public static class Extensions
             return false;
         }
 
-        response = $"You need to download the 'ProjectMER' to run this mini-game.\n" +
+        response = $"You need to download 'ProjectMER' to run this mini-game.\n" +
                    $"Read the installation instruction in the github.";
         return false;
     }

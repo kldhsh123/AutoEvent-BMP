@@ -27,7 +27,7 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap, IEventSound
     public override EventFlags EventHandlerSettings { get; set; } = EventFlags.IgnoreRagdoll;
     protected override FriendlyFireSettings ForceEnableFriendlyFireAutoban { get; set; } = FriendlyFireSettings.Disable;
     private EventHandler EventHandler { get; set; }
-    public int Stage { get; private set; }
+    private int Stage { get; set; }
 
     public MapInfo MapInfo { get; set; } = new()
     {
