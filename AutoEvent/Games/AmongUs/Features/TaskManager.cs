@@ -63,12 +63,12 @@ internal class TaskManager
         return !TryGet(player, out var tm) ? 0 : tm.Tasks.Count(t => t.Type == type);
     }
 
-    internal static List<StageTask> GetPlayerStageTasks(Player player)
+    internal static List<StageTask> GetPlayerStageTasks(Player player, bool forceGet = false)
     {
         if (!TryGet(player, out var tm)) return [];
         return tm.Tasks
-            .Where(t => t.IsDone && t.StageTasks.Count > 0)
-            .SelectMany(t => t.StageTasks)
+            .Where(t => (forceGet || t.IsDone) && t.StageTasks.Count > 0)
+            .SelectMany(t => t.StageTasks)           
             .Where(st => !st.IsDone)
             .ToList();
     }

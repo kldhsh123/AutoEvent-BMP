@@ -95,7 +95,11 @@ public class EventHandler(Plugin plugin)
             LogManager.Debug("[OnPlayerSearchedToy] TaskManager not found for player");
             return;
         }
-
+        
+        var regularTasks = taskManager.Tasks.Select(t => $"{t.Name} (Room: {t.RoomName}, isDone: {t.IsDone}, isVisual: {t.IsVisual})");
+        var stageTasks = TaskManager.GetPlayerStageTasks(ev.Player, true).Select(st => $"{st.Name} (Room: {st.RoomName}, isDone: {st.IsDone}, Stage)");
+        LogManager.Debug("Player tasks: " + string.Join("\n", regularTasks.Concat(stageTasks)));        
+        
         var task = taskManager.Tasks.FirstOrDefault(t =>
             (string.IsNullOrEmpty(tName) || t.Name.ToString() == tName) && t.RoomName.ToString() == room && !t.IsDone);
 
@@ -124,7 +128,6 @@ public class EventHandler(Plugin plugin)
             else
             {
                 LogManager.Debug("[OnPlayerSearchedToy] No more regular tasks for this room/name.");
-                ev.Interactable.Base.SetFakeIsLocked(ev.Player, true);
             }
 
             return;
@@ -157,11 +160,19 @@ public class EventHandler(Plugin plugin)
         else
         {
             LogManager.Debug("[OnPlayerSearchedToy] No further stage tasks.");
-            ev.Interactable.Base.SetFakeIsLocked(ev.Player, true);
         }
 
         stageTask.IsDone = true;
         LogManager.Debug("[OnPlayerSearchedToy] Marked stage task done.");
+        
+        var hasMoreRegularTasks = taskManager.Tasks.Any(t =>
+            (string.IsNullOrEmpty(tName) || t.Name.ToString() == tName) && t.RoomName.ToString() == room && !t.IsDone);
+        var hasMoreStageTasks = TaskManager.GetPlayerStageTasks(ev.Player, true).Any(st =>
+            (string.IsNullOrEmpty(tName) || st.Name.ToString() == tName) && st.RoomName.ToString() == room &&
+            !st.IsDone);
+        if (hasMoreRegularTasks || hasMoreStageTasks) return;
+        LogManager.Debug("[OnPlayerSearchedToy] No more tasks (regular or stage) for this interactable. Locking it.");
+        ev.Interactable.Base.SetFakeIsLocked(ev.Player, true);
     }
 
     internal void OnPlayerChangingItem(PlayerChangingItemEventArgs ev)

@@ -356,6 +356,12 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap
                     Impostors.Remove(votedOut);
                     Crewmates.Remove(votedOut);
                     KillCooldowns.Remove(votedOut);
+                    
+                    if (PlayerSkins.TryGetValue(votedOut.NetworkId, out var skin) && skin != null)
+                    {
+                        NetworkServer.Destroy(skin);
+                        PlayerSkins.Remove(votedOut.NetworkId);
+                    }
 
                     if (Config.ConfirmEjects)
                     {
@@ -808,7 +814,8 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap
                             },
                             new StageTask
                             {
-                                Name = TaskName.AcceptDivertedPower, RoomName = RoomName.O2, Type = TaskType.Short,
+                                Name = TaskName.AcceptDivertedPower, RoomName = RoomName.O2, 
+                                Type = TaskType.Short,
                                 Description = Instance.Translation.AcceptDivertPower
                             },
                             new StageTask
@@ -897,7 +904,7 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap
                     },
                     new Task
                     {
-                        Name = TaskName.AcceptDivertedPower,
+                        Name = TaskName.UploadData,
                         RoomName = RoomName.Weapons,
                         Type = TaskType.Long,
                         Description = Instance.Translation.DownloadData,

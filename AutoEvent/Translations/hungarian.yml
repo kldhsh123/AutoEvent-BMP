@@ -1,20 +1,18 @@
-﻿  hint_cycle: <color=#ff0000>Te - {kills}/{needKills} ölések</color></size>
-  leaderboard: Ranglista
-Airstrike Party:
+﻿Airstrike Party:
   cycle: |-
     <color=yellow>Kerüld el a gránátokat!</color>
     <color=green>{time} másodperc telt el</color>
     <color=red>{count} db játékos maradt</color>
   more_player: |-
-    <color=red>Death Party</color>
+    <color=red>AirStrike</color>
     <color=yellow><color=red>{count}</color> db játékos élte túl.</color>
     <color=#ffc0cb>{time}</color>
   one_player: |-
-    <color=red>Death Party</color>
+    <color=red>AirStrike</color>
     <color=yellow>Győztes - <color=red>{winner}</color></color>
     <color=#ffc0cb>{time}</color>
   all_die: |-
-    <color=red>Death Party</color>
+    <color=red>AirStrike</color>
     <color=yellow>Senki sem élte túl. :(((</color>
     <color=#ffc0cb>{time}</color>
   name: 'Airstrike'
@@ -60,29 +58,29 @@ Among Us:
   death_body_reported: '<color=red>{deadPlayer}</color> holttestét <color=yellow>{reportedPlayer}</color> találta meg!'
   emergency_meetings_reached: 'Már nem hívhatsz több vészmegbeszélést!'
   meeting_cooldown: 'Még {time} másodpercig nem hívhatsz megbeszélést!'
-  calibrate_distributor: 'Calibrate Distributor'
-  chart_course: 'Chart Course'
-  clean_o2_filter: 'Clean O2 Filter'
-  empty_chute: 'Empty Chute'
-  prime_shields: 'Prime Shields'
-  start_reactor: 'Start Reactor'
-  submit_scan: 'Submit Scan'
-  fix_wiring: 'Fix Wiring'
-  align_engine_output: 'Align Engine Output'
-  divert_power_to: 'Divert Power to {roomName}'
-  accept_divert_power: 'Accept Divert Power'
-  download_data: 'Download Data'
-  upload_data: 'Upload Data'
-  no_votes: 'No votes'
-  vote: 'vote'
-  no_one_voted_out: 'No one was voted out.'
-  its_a_tie: 'It''s a tie!'
-  death_message: 'Voted out.'
-  voted_out: '{player} was voted out.'
-  tasks: 'Tasks'
-  didnt_vote: 'Didn''t vote'
-  was_an_impostor: '{player} was an Impostor.'
-  was_not_an_impostor: '{player} was not an Impostor.'
+  calibrate_distributor: 'Elosztő kalibrálása'
+  chart_course: 'Útvonal beállítása'
+  clean_o2_filter: 'O2 Szűrő tisztítása'
+  empty_chute: 'Leeresztő ürítése'
+  prime_shields: 'Pajzs aktiválása'
+  start_reactor: 'Reaktor indítása'
+  submit_scan: 'Szkennelés leadása'
+  fix_wiring: 'Vezetékezés javítása'
+  align_engine_output: 'Motor kimenetének igazítása'
+  divert_power_to: 'Energia átirányítása: {roomName}'
+  accept_divert_power: 'Energiaátirányítás elfogadása'
+  download_data: 'Adatok letöltése'
+  upload_data: 'Adatok feltöltése'
+  no_votes: 'Senki sem szavazott rád'
+  vote: 'szavazat'
+  no_one_voted_out: 'Senki sem lett kiszavazva!'
+  its_a_tie: 'Döntetlen, senki sem lett kiszavazva!'
+  death_message: 'Kiszavazva.'
+  voted_out: '{player} ki lett szavazva.'
+  tasks: 'Feladatok'
+  didnt_vote: 'Akik nem szavaztak:'
+  was_an_impostor: '{player} Imposztor volt.'
+  was_not_an_impostor: '{player} nem volt Imposztor.'
   name: 'Among Us'
   description: 'Az Impostor köztünk van.'
   command_name: 'amongus'
