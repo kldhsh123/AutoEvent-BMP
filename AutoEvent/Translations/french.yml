@@ -77,7 +77,7 @@ Among Us:
   upload_data: 'Uploader les données'
   no_votes: 'Pas de votes'
   vote: 'vote'
-  no_one_voted_out: 'Personne n''a été voté'.'
+  no_one_voted_out: 'Personne n''a été voté.'
   its_a_tie: 'égalité !'
   death_message: 'Tu as été voté !.'
   voted_out: '{player} à été voté.'
@@ -86,7 +86,7 @@ Among Us:
   was_an_impostor: '{player} était un imposteur.'
   was_not_an_impostor: '{player} n''était pas un imposteur.'
   name: 'Among Us'
-  description: 'L''imposteur est parmis nous'.'
+  description: 'L''imposteur est parmis nous.'
   command_name: 'amongus'
 Nuke Run:
   before_start: |-
@@ -103,7 +103,7 @@ Nuke Run:
   description: 'Enfuyez vous de la facilité avant l''explosion!'
   command_name: 'escape'
 Battle:
-  time_left: '<size=100><color=red>Le combat commence dans {time} </color></size>'
+  time_left: '<size=60><color=red>Le combat commence dans {time} </color></size>'
   ci_win: |-
     <color=#299438>Winner: Insurrection du chaos </color>
     <color=red>Durée: {time} </color>
@@ -432,7 +432,7 @@ Simon's Prison:
   lives_remaining: 'Tu as {lives} vie restante.'
   no_lives_remaining: 'Tu n''as plus de vie restante'
   name: 'Simon''s Prison'
-  description: 'Jail mode de CS 1.6, cette event doit ce tenir manuellement par le maitre du jeu'
+  description: 'Jail mode de CS 1.6, cet event doit ce tenir manuellement par le maitre du jeu'
   command_name: 'jail'
 Spleef:
   start: '<color=red>Commence dans: </color>{time}'
@@ -531,5 +531,5 @@ Zombie Survival:
   survival_human_win: '<color=#14AAF5>Les humains ont tué tous les zombies et ont stoppé infection</color>'
   survival_human_win_time: '<color=yellow>Les humains ont survecu mais infection na pas été arrêté</color>'
   name: 'Zombie Survival'
-  description: 'Les humains doivent survire attaque des zombies'
+  description: 'Les humains doivent survivre à une attaque des zombies'
   command_name: 'zombie2'
