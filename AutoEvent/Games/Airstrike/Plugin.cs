@@ -20,7 +20,7 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap, IEventSound
     private CoroutineHandle _grenadeCoroutineHandle;
     public List<GameObject> SpawnList;
     public override string Name { get; set; } = "Airstrike Party";
-    public override string Description { get; set; } = "Survive as aistrikes rain down from above.";
+    public override string Description { get; set; } = "Survive as grenades rain down from above.";
     public override string Author { get; set; } = "RisottoMan";
     public override string CommandName { get; set; } = "airstrike";
     protected override FriendlyFireSettings ForceEnableFriendlyFire { get; set; } = FriendlyFireSettings.Enable;

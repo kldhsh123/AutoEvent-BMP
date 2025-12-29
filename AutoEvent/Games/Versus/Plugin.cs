@@ -21,6 +21,8 @@ public class Plugin : Event<Config, Translation>, IEventSound, IEventMap
     private List<GameObject> _triggers;
     internal Player ClassD;
     internal Player Scientist;
+    internal int ScientistLifespan;
+    internal int ClassDLifespan;
     public override string Name { get; set; } = "Cock Fights";
     public override string Description { get; set; } = "Duel of players on the 35hp map from cs 1.6";
     public override string Author { get; set; } = "RisottoMan/code & xleb.ik/map";
@@ -60,6 +62,8 @@ public class Plugin : Event<Config, Translation>, IEventSound, IEventMap
     {
         Scientist = null;
         ClassD = null;
+        ScientistLifespan = 0;
+        ClassDLifespan = 0;
         _eventState = 0;
         _triggers = [];
         _teleports = [];

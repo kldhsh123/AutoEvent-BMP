@@ -27,6 +27,9 @@ public class Config : EventConfig
     [Description("Can be used to disable the jailbird charging attack.")]
     public bool JailbirdCanCharge { get; set; } = false;
 
+    [Description("Number of rounds each player plays. Set to 0 for infinite rounds.")]
+    public int JailbirdLifespan { get; set; } = 0;
+    
     [Description("How long to wait before forcefully selecting a random player. Set to -1 to disable.")]
     public int AutoSelectDelayInSeconds { get; set; } = 10;
 
