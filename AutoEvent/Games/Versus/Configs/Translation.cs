@@ -21,4 +21,7 @@ public class Translation : EventTranslation
 
     public string ScientistWin { get; set; } =
         "<color=#D71868><b><i>{name}</i></b></color>\n<color=yellow>WINNERS: <color=red>SCIENTISTS</color></color>";
+    
+    public string MaxRoundReached { get; set; } =
+        "You reached the max number of rounds!";
 }
