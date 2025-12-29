@@ -138,6 +138,7 @@ Cock Fights:
   scientist_win: |-
     <color=#D71868><b><i>{name}</i></b></color>
     <color=yellow>ZWYCIĘZCY: <color=red>SCIENTISTS</color></color>
+  max_round_reached: You reached the max number of rounds!
   name: 'Bitwa Kurczaków'
   description: 'Pojedynek graczy z 35HP na mapie z cs 1.6'
   command_name: 'versus'

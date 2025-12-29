@@ -134,6 +134,7 @@ Cock Fights:
   scientist_win: |-
     <color=#D71868><b><i>{name}</i></b></color>
     <color=yellow>GYŐZTESEK: <color=red>SCIENTIST</color></color>
+  max_round_reached: Elérted a maximális körszámot!
   name: 'Kakasviadal'
   description: 'Játékosok párbaja a cs 1.6-ból ismert 35hp pályán'
   command_name: 'versus'

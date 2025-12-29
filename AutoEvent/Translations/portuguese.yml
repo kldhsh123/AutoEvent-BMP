@@ -138,6 +138,7 @@ Cock Fights:
   scientist_win: |-
     <color=#D71868><b><i>{name}</i></b></color>
     <color=yellow>VENCEDORES: <color=red>CIENTISTAS</color></color>
+  max_round_reached: You reached the max number of rounds!
   name: 'Rinha de Galo'
   description: 'Duelo de jogadores no mapa 35hp do CS 1.6'
   command_name: 'versus'

@@ -137,7 +137,8 @@ Cock Fights:
     <color=yellow>GANADORES: <color=red>CLASE D</color></color>  
   scientist_win: |-
     <color=#D71868><b><i>{name}</i></b></color>  
-    <color=yellow>GANADORES: <color=red>CIENTÍFICOS</color></color>  
+    <color=yellow>GANADORES: <color=red>CIENTÍFICOS</color></color> 
+  max_round_reached: You reached the max number of rounds!
   name: 'Peleas de jailbird'
   description: 'Duelo de jugadores en el mapa de 35hp de cs 1.6'
   command_name: 'versus'

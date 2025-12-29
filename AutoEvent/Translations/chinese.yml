@@ -138,6 +138,7 @@ Cock Fights:
   scientist_win: |-
     <color=#D71868><b><i>{name}</i></b></color>
     <color=yellow>胜者 <color=red>科学家</color></color>
+  max_round_reached: You reached the max number of rounds!
   name: '囚鸟对决'
   description: '在 cs 1.6 的 35hp 地图上进行的玩家决斗'
   command_name: 'versus'

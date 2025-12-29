@@ -138,6 +138,7 @@ Cock Fights:
   scientist_win: |-
     <color=#D71868><b><i>{name}</i></b></color>
     <color=yellow>GAGNANT: <color=red>SCIENTIFIQUES</color></color>
+  max_round_reached: You reached the max number of rounds!
   name: 'Cock Fights'
   description: 'Duel de joueurs sur la carte 35hp de cs 1.6'
   command_name: 'versus'

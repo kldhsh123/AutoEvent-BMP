@@ -138,6 +138,7 @@ Cock Fights:
   scientist_win: |-
     <color=#D71868><b><i>{name}</i></b></color>
     <color=yellow>VINCITORI: <color=red>SCIENZIATI</color></color>
+  max_round_reached: You reached the max number of rounds!
   name: 'Combattimenti di galli'
   description: 'Duello tra player con 35hp nella mappa di cs 1.6'
   command_name: 'versus'

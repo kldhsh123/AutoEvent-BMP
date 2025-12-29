@@ -138,6 +138,7 @@ Cock Fights:
   scientist_win: |-
     <color=#D71868><b><i>{name}</i></b></color>
     <color=yellow>Победители: <color=red>Ученые</color></color>
+  max_round_reached: You reached the max number of rounds!
   name: 'Петушиные бои'
   description: 'Дуэль на карте 35hp из CS 1.6'
   command_name: 'versus'
