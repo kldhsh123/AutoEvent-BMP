@@ -697,7 +697,7 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap
                     new Task
                     {
                         Name = TaskName.ChartCourse, RoomName = RoomName.Navigation, Type = TaskType.Short,
-                        Description = Instance.Translation.CharCourse
+                        Description = Instance.Translation.ChartCourse
                     },
                     new Task
                     {

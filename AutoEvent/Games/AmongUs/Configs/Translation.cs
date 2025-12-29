@@ -27,7 +27,7 @@ public class Translation : EventTranslation
     public string CannotCallMeetingDuringSabotage { get; set; } = "You cannot call an emergency meeting during this sabotage!";
     
     public string CalibrateDistributor { get; set; } = "Calibrate Distributor";
-    public string CharCourse { get; set; } = "Chart Course";
+    public string ChartCourse { get; set; } = "Chart Course";
     public string CleanO2Filter { get; set; } = "Clean O2 Filter";
     public string EmptyChute { get; set; } = "Empty Chute";
     public string StartReactor { get; set; } = "Start Reactor";

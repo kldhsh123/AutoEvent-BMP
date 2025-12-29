@@ -53,8 +53,8 @@ Among Us:
     {time} Sekunden verbleiben.
   discussion_info: |-
     {reason}
-    Discussion time! You can't chat with other players.
-    {time} seconds remaining, soon you will can speak and vote.
+    Diskussions Zeit! Du kannst nicht mit anderen Leuten reden.
+    {time} Sekunden verbleiben, gleich kannst du reden und abstimmen.
   meeting_called: 'Eine Sitzung wurde von {player} gefordert!'
   death_body_reported: '<color=red>{deadPlayer}</color>''s Leiche wurde von <color=yellow>{reportedPlayer}</color> gefunden!'
   emergency_meetings_reached: 'Du kannst keine weitere Notfall-Sitzungen anfordern!'
@@ -135,7 +135,7 @@ Cock Fights:
   scientist_win: |-
     <color=#D71868><b><i>{name}</i></b></color>
     <color=yellow>GEWINNER: <color=red>WISSENSCHAFTLER</color></color>
-  max_round_reached: 'You reached the max number of rounds!'
+  max_round_reached: 'Du hast die maximale Rundenanzahl erreicht!'
   name: 'Box kämpfe'
   description: 'Duell der Spieler auf der 35hp-Map aus CS 1.6'
   command_name: 'versus'
@@ -493,7 +493,7 @@ The floor is LAVA:
     Spieler - {winner}</b></color>
   all_dead: '<color=red><b>Niemand hat es bis zum Ende überlebt.</b></color>'
   died: '<color=red>In Lava verbrannt</color>'
-  reload: 'Reload your weapon!'
+  reload: 'Lade deine Waffe nach!'
   name: 'Der Boden ist LAVA'
   description: 'Überleben, indem du Lava vermeidest und auf andere schießt.'
   command_name: 'lava'
