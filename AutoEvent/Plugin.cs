@@ -37,6 +37,9 @@ public class AutoEvent : Plugin<Config>
         try
         {
             Singleton = this;
+            
+            if (Config.CreditTagSystem)
+                CreditTag.GetTagsFromGithub();
 
             if (Config.IgnoredRoles.Contains(Config.LobbyRole))
             {

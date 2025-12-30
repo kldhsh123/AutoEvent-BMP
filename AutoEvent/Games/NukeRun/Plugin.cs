@@ -70,6 +70,7 @@ public class Plugin : Event<Config, Translation>, IEventSound
             player.Position = startPos.transform.position;
             player.EnableEffect<Ensnared>(1, 11);
         }
+
         Object.Destroy(startPos);
 
         Warhead.Scenario = Warhead.StartScenarios.First();
@@ -115,6 +116,7 @@ public class Plugin : Event<Config, Translation>, IEventSound
             door.NetworkTargetState = false;
             door.ServerChangeLock(DoorLockReason.Warhead, false);
         }
+
         Warhead.OpenBlastDoors();
         Warhead.Scenario = Warhead.StartScenarios.First();
     }

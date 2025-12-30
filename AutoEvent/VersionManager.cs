@@ -10,7 +10,7 @@ namespace AutoEvent;
 public static class VersionManager
 {
     private const bool PreRelease = false;
-    
+
     internal static async Task CheckForUpdatesAsync(Version currentVersion)
     {
         try
@@ -44,7 +44,8 @@ public static class VersionManager
             if (allReleasesDoc.RootElement.ValueKind == JsonValueKind.Array)
             {
                 DateTime? bestPublishedAt = null;
-                foreach (var rel in allReleasesDoc.RootElement.EnumerateArray().Where(rel => rel.ValueKind == JsonValueKind.Object))
+                foreach (var rel in allReleasesDoc.RootElement.EnumerateArray()
+                             .Where(rel => rel.ValueKind == JsonValueKind.Object))
                 {
                     var draft = rel.TryGetProperty("draft", out var draftProp) &&
                                 draftProp.ValueKind == JsonValueKind.True;
@@ -135,7 +136,9 @@ public static class VersionManager
 
             if (currentIsNewerThanRemote)
             {
-                var remoteLabel = string.IsNullOrWhiteSpace(latestRemoteTag) ? "the latest GitHub release" : latestRemoteTag;
+                var remoteLabel = string.IsNullOrWhiteSpace(latestRemoteTag)
+                    ? "the latest GitHub release"
+                    : latestRemoteTag;
                 LogManager.Info(
                     $"You are running a newer version ({currentVersion}) than {remoteLabel} on GitHub. This is a development build and 100% that it contains errors or bugs.",
                     ConsoleColor.DarkMagenta);

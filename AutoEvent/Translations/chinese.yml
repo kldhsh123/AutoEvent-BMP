@@ -454,12 +454,12 @@ Spleef:
 Tag:
   broadcast: |-
     <color=red>快跑！</color>
-    <color=yellow>正在选出烫手山芋持有者，现在躲起来！</color>
+    <color=yellow>正在选出烫手山芋(炸弹)持有者，请注意躲避！</color>
     剩余时间：{time}
   cycle: |-
-    <color=yellow>尽快把烫手山芋传给其他玩家！</color>
+    <color=yellow>尽快把烫手山芋(炸弹)传给其他玩家！</color>
     <color=red><b><i>剩余 {time} 秒</i></b></color>
-  hurt: '<color=red>你没能把烫手山芋传出去</color>'
+  hurt: '<color=red>你没能把烫手山芋(炸弹)传出去</color>'
   one_player: |-
     <color=green>胜者：</color>{winner}
     <color=yellow>本局用时 <color=red>{time}</color></color>

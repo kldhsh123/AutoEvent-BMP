@@ -13,7 +13,7 @@ public class KillComponent : MonoBehaviour
         _collider = gameObject.AddComponent<BoxCollider>();
         _collider.isTrigger = true;
     }
-    
+
     private void OnTriggerEnter(Collider collider)
     {
         if (Player.Get(collider.gameObject) is not { } player) return;

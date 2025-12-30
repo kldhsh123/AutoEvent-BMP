@@ -68,7 +68,7 @@ internal class TaskManager
         if (!TryGet(player, out var tm)) return [];
         return tm.Tasks
             .Where(t => (forceGet || t.IsDone) && t.StageTasks.Count > 0)
-            .SelectMany(t => t.StageTasks)           
+            .SelectMany(t => t.StageTasks)
             .Where(st => !st.IsDone)
             .ToList();
     }

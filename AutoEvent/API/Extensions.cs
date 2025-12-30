@@ -80,7 +80,7 @@ public static class Extensions
 
         loadout = loadouts[loadouts.Count - 1];
         assignLoadout:
-        GiveLoadout(player, loadout, flags);
+        player.GiveLoadout(loadout, flags);
     }
 
     public static void GiveLoadout(this Player player, Loadout loadout, LoadoutFlags flags = LoadoutFlags.None)
@@ -219,7 +219,8 @@ public static class Extensions
             AutoEvent.EventManager.CurrentEvent.StopEvent();
 
             foreach (var pl in Player.ReadyList) pl.SetRole(RoleTypeId.Spectator);
-            LogManager.Error($"The schematic {serializableSchematic.SchematicName} could not be loaded. Delete and re-download the schematics.");
+            LogManager.Error(
+                $"The schematic {serializableSchematic.SchematicName} could not be loaded. Delete and re-download the schematics.");
             return null;
         }
 
@@ -339,7 +340,7 @@ public static class Extensions
                 LogManager.Debug($"[PlayAudio] The music file {fileName} does not exist at path {filePath}");
                 return null;
             }
-            
+
             if (!AudioClipStorage.LoadClip(filePath, fileName))
             {
                 LogManager.Debug($"[PlayAudio] The music file {fileName} was not found for playback");
@@ -373,7 +374,7 @@ public static class Extensions
                 LogManager.Debug($"[PlayAudio] The music file {fileName} does not exist at path {filePath}");
                 return;
             }
-            
+
             if (!AudioClipStorage.LoadClip(filePath, fileName))
             {
                 LogManager.Debug($"[PlayAudio] The music file {fileName} was not found for playback");
@@ -440,14 +441,14 @@ public static class Extensions
     public static void SetInteractableToy(this InvisibleInteractableToy toy, Player player, float duration)
     {
         if (toy == null || player == null) return;
-        InteractableToys[Key(toy, player.NetworkId)] = duration;
+        InteractableToys[toy.Key(player.NetworkId)] = duration;
     }
 
     public static bool TryGetInteractableToy(this InvisibleInteractableToy toy, ReferenceHub hub, out float duration)
     {
         duration = 0;
         if (toy == null || hub == null) return false;
-        return InteractableToys.TryGetValue(Key(toy, hub.networkIdentity.netId), out duration);
+        return InteractableToys.TryGetValue(toy.Key(hub.networkIdentity.netId), out duration);
     }
 
     public static void ClearInteractableToy(this InvisibleInteractableToy toy)

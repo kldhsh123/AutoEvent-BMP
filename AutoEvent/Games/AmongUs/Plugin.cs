@@ -32,11 +32,14 @@ namespace AutoEvent.Games.AmongUs;
 public class Plugin : Event<Configs.Config, Translation>, IEventMap
 {
     internal readonly List<Player> Muted = [];
+    internal readonly Dictionary<Player, int> Radios = [];
     private EventHandler _eventHandler;
     internal List<Player> Crewmates = [];
     internal List<Player> Impostors = [];
     internal bool MeetingCalled;
     internal int MeetingCooldown;
+
+    internal List<Player> VentedPlayers = [];
     public override string Name { get; set; } = "Among Us";
     public override string Description { get; set; } = "The Impostor is among us.";
     public override string Author { get; set; } = "MedveMarci";
@@ -58,16 +61,13 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap
     internal Dictionary<uint, uint> PlayerVotes { get; private set; }
     internal Dictionary<uint, string> PlayerColors { get; private set; }
     internal Dictionary<uint, TextToy> PlayerTextToys { get; private set; }
-    
+
     private Dictionary<string, List<Task>> GeneratedTasks { get; set; }
     private Dictionary<string, List<Sabotage>> GeneratedSabotages { get; set; }
     internal List<Sabotage> CurrentSabotages { get; private set; }
     internal Dictionary<Player, DateTime> KillCooldowns { get; private set; } = new();
     internal Dictionary<Player, int> PlayerMeetings { get; private set; } = new();
     internal List<ushort> ImpostorRadioItems { get; private set; } = [];
-    
-    internal List<Player> VentedPlayers = [];
-    internal readonly Dictionary<Player, int> Radios = [];
     internal Sabotage CurrentSabotage { get; set; }
     internal DateTime LastActivated { get; set; }
 
@@ -131,7 +131,6 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap
         LastActivated = DateTime.MinValue;
 
         foreach (var adminToyBase in MapInfo.Map.AdminToyBases)
-        {
             if (adminToyBase.name.Contains("Spawnpoint"))
             {
                 SpawnList.Add(adminToyBase.gameObject);
@@ -162,7 +161,6 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap
             }
             else if (adminToyBase is LightSourceToy lightSourceToy)
             {
-
                 LightToys ??= [];
                 LightToys.Add(lightSourceToy);
             }
@@ -173,7 +171,6 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap
                 TeleportOutList ??= new ConcurrentDictionary<string, Vector3>();
                 TeleportOutList[key] = adminToyBase.transform.position;
             }
-        }
 
         Impostors = Config.Impostors.GetPlayers();
         var ready = Player.ReadyList.ToList();
@@ -290,7 +287,7 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap
                 discussionTime--;
                 continue;
             }
-            
+
             if (discussionTime == 0)
             {
                 LogManager.Debug("Unmuting players");
@@ -299,6 +296,7 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap
                     player.Unmute(true);
                     player.Unmute(false);
                 }
+
                 Muted.Clear();
                 discussionTime--;
             }
@@ -356,7 +354,7 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap
                     Impostors.Remove(votedOut);
                     Crewmates.Remove(votedOut);
                     KillCooldowns.Remove(votedOut);
-                    
+
                     if (PlayerSkins.TryGetValue(votedOut.NetworkId, out var skin) && skin != null)
                     {
                         NetworkServer.Destroy(skin);
@@ -364,17 +362,13 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap
                     }
 
                     if (Config.ConfirmEjects)
-                    {
                         Extensions.ServerBroadcast(
                             Impostors.Contains(votedOut)
                                 ? $"{Translation.WasAnImpostor.Replace("{player}", votedOut.Nickname)}"
                                 : $"{Translation.WasNotAnImpostor.Replace("{player}", votedOut.Nickname)}", 5);
-                    }
                     else
-                    {
                         Extensions.ServerBroadcast(
                             $"{Translation.VotedOut.Replace("{player}", votedOut.Nickname)}", 5);
-                    }
                 }
 
                 break;
@@ -411,11 +405,8 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap
 
     protected override void ProcessFrame()
     {
-        if (CurrentSabotage is { IsCritical: true })
-        {
-            CurrentSabotage.Timer--;
-        }
-        
+        if (CurrentSabotage is { IsCritical: true }) CurrentSabotage.Timer--;
+
         if (MeetingCalled)
         {
             var participants = Crewmates.Concat(Impostors);
@@ -433,11 +424,9 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap
                 var votes = PlayerVotes.Where(v => v.Value == player.NetworkId).Select(v => v.Key).ToList();
                 string text;
                 if (votes.Count > 0)
-                {
                     text = Config.AnonymousVotes
                         ? $"{votes.Count} {Translation.Vote}"
                         : $"{string.Join(", ", votes.Select(id => Player.Get(id)?.Nickname ?? id.ToString()))}\n{votes.Count} {Translation.Vote}";
-                }
                 else
                     text = Translation.NoVotes;
 
@@ -448,14 +437,17 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap
                 if (didntVote.Count > 0)
                 {
                     hintText += $"\n{Translation.DidntVote}:\n";
-                    hintText += string.Join(", ", didntVote.Select(p => PlayerColors.TryGetValue(p.NetworkId, out var hex) ? (
-                        $"<color={hex}>{p.DisplayName}</color>").Replace("*", "") : p.DisplayName.Replace("*", "")));
+                    hintText += string.Join(", ",
+                        didntVote.Select(p =>
+                            PlayerColors.TryGetValue(p.NetworkId, out var hex)
+                                ? $"<color={hex}>{p.DisplayName}</color>".Replace("*", "")
+                                : p.DisplayName.Replace("*", "")));
                 }
-                
+
                 textToy.TextFormat = $"<size=10>{text}</size>";
                 player.SendHint(hintText, 1.25f);
             }
-            
+
             MeetingCooldown = Config.EmergencyCooldown;
             return;
         }
@@ -477,6 +469,7 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap
                     player.SendHint(sb.ToString(), 1.25f);
                     continue;
                 }
+
                 foreach (var mt in tm.Tasks)
                 {
                     var hasStages = mt.StageTasks is { Count: > 0 };
@@ -519,7 +512,8 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap
                 }
 
                 player.SendHint(sb.ToString(), 1.25f);
-            } else if (Impostors.Contains(player))
+            }
+            else if (Impostors.Contains(player))
             {
                 if (!Radios.TryGetValue(player, out var index)) continue;
                 var sabotage = CurrentSabotages[index % CurrentSabotages.Count];
@@ -527,10 +521,12 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap
                 var cooldown = Math.Max(0, Config.SabotageCooldown - (DateTime.UtcNow - LastActivated).TotalSeconds);
                 if (cooldown > 0)
                     sb.AppendLine($"Cooldown: {cooldown:0} sec");
-                sb.AppendLine($"Currently Active: {(CurrentSabotage != null ? "<color=red>" + CurrentSabotage.Name + "</color>" : "None")}");
+                sb.AppendLine(
+                    $"Currently Active: {(CurrentSabotage != null ? "<color=red>" + CurrentSabotage.Name + "</color>" : "None")}");
                 player.SendHint(sb.ToString(), 1.25f);
             }
         }
+
         StringBuilderPool.Shared.Return(sb);
     }
 
@@ -541,7 +537,7 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap
             Result = Translation.ImpostorWin;
             return true;
         }
-        
+
         var impostorAlive = Impostors.Any(i => i.IsAlive);
         var crewmateAlive = Crewmates.Any(c => c.IsAlive);
 
@@ -598,6 +594,7 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap
             player.Unmute(true);
             player.Unmute(false);
         }
+
         Muted.Clear();
         TaskManager.ClearForPlayers(Player.ReadyList);
         Server.ClearBroadcasts();
@@ -656,7 +653,8 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap
                 LogManager.Debug($"Trying to assign toys for task {task.Name}");
                 foreach (var taskToy in TaskToyList.Where(taskToy => !assignedToys.Contains(taskToy)))
                 {
-                    if (!EventHandler.TryParseToyName(taskToy.name, out var room, out var tName, out var isTask, out _, out _)) continue;
+                    if (!EventHandler.TryParseToyName(taskToy.name, out var room, out var tName, out var isTask, out _,
+                            out _)) continue;
                     if (!isTask) continue;
                     if ((!string.IsNullOrEmpty(tName) && task.Name.ToString() != tName) ||
                         task.RoomName.ToString() != room)
@@ -716,7 +714,8 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap
                     },
                     new Task
                     {
-                        Name = TaskName.EmptyChute, RoomName = RoomName.Storage, Type = TaskType.Common, IsVisual = true,
+                        Name = TaskName.EmptyChute, RoomName = RoomName.Storage, Type = TaskType.Common,
+                        IsVisual = true,
                         Description = Instance.Translation.EmptyChute
                     },
                     new Task
@@ -814,7 +813,7 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap
                             },
                             new StageTask
                             {
-                                Name = TaskName.AcceptDivertedPower, RoomName = RoomName.O2, 
+                                Name = TaskName.AcceptDivertedPower, RoomName = RoomName.O2,
                                 Type = TaskType.Short,
                                 Description = Instance.Translation.AcceptDivertPower
                             },
@@ -943,7 +942,7 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap
                     {
                         Name = "Door Lockdown", Type = SabotageType.DoorLockdown, EnabledMeetings = true,
                         IsCritical = false
-                    }/*,
+                    } /*,
                     new Sabotage
                     {
                         Name = "O2", Type = SabotageType.OxygenDepleted, Duration = 30f, EnabledMeetings = false,
@@ -959,4 +958,3 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap
         };
     }
 }
-

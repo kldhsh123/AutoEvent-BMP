@@ -2,8 +2,6 @@
 using AutoEvent.Loader;
 using CommandSystem;
 using LabApi.Features.Permissions;
-using LabApi.Features.Wrappers;
-using PlayerRoles;
 
 namespace AutoEvent.Commands;
 
@@ -26,7 +24,7 @@ internal class Reload : ICommand
             response = "The mini-game is running!";
             return false;
         }
-        
+
         AutoEvent.Singleton.LoadConfigs();
         ConfigManager.LoadConfigsAndTranslations();
         response = "Reloaded the configs and the languages.";

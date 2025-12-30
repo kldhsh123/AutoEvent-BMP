@@ -45,10 +45,11 @@ public class Volume : ICommand, IUsageProvider
                 LogManager.Error("AutoEvent config was null when trying to set volume.");
                 return false;
             }
+
             AutoEvent.Singleton.Config.Volume = newVolume;
             AutoEvent.Singleton.SaveConfig();
             AutoEvent.Singleton.LoadConfigs();
-            
+
             response = "The volume has been set!";
             return true;
         }

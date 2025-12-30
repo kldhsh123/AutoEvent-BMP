@@ -180,4 +180,20 @@ internal class EventHandler : CustomEventsHandler
         AutoEvent.EventManager.CurrentEvent.StopEvent();
         base.OnServerRoundRestarted();
     }
+
+    public override void OnPlayerJoined(PlayerJoinedEventArgs ev)
+    {
+        if (AutoEvent.Singleton.Config != null && AutoEvent.Singleton.Config.CreditTagSystem)
+        {
+            CreditTag.GetTagsFromGithub();
+            if (CreditTag.TryGetTag(ev.Player.UserId, out var tag, out var color))
+            {
+                ev.Player.ReferenceHub.serverRoles.SetText(tag);
+                ev.Player.ReferenceHub.serverRoles.SetColor(color);
+                LogManager.Debug($"Applied credit tag to player {ev.Player.Nickname} ({ev.Player.UserId}): {tag}");
+            }
+        }
+
+        base.OnPlayerJoined(ev);
+    }
 }

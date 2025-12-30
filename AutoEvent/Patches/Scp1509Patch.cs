@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using AutoEvent.Games.AmongUs;
+using HarmonyLib;
 using InventorySystem.Items.Scp1509;
 
 namespace AutoEvent.Patches;
@@ -8,7 +9,8 @@ public class Scp1509Patch
 {
     private static bool Prefix(ref bool __result)
     {
-        if (AutoEvent.EventManager.CurrentEvent == null || AutoEvent.EventManager.CurrentEvent is not Games.AmongUs.Plugin) return true;
+        if (AutoEvent.EventManager.CurrentEvent == null ||
+            AutoEvent.EventManager.CurrentEvent is not Plugin) return true;
         __result = false;
         return false;
     }

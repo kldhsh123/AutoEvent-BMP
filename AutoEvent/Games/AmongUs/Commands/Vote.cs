@@ -49,18 +49,19 @@ internal class Vote : ICommand, IUsageProvider
 
         var colorName = arguments.At(0);
 
-        if (string.Equals(colorName, "none", StringComparison.OrdinalIgnoreCase) || string.Equals(colorName, "skip", StringComparison.OrdinalIgnoreCase))
+        if (string.Equals(colorName, "none", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(colorName, "skip", StringComparison.OrdinalIgnoreCase))
         {
             Plugin.Instance.PlayerVotes[player.NetworkId] = 0;
             response = "You voted for no one.";
             return true;
         }
-        
+
         if (!Enum.TryParse(colorName, true, out Misc.PlayerInfoColorTypes colorType) ||
             !Misc.AllowedColors.TryGetValue(colorType, out var colorHex))
         {
-            var referenceHubList = RAUtils.ProcessPlayerIdOrNamesList(arguments, 0, out string[] _);
-            
+            var referenceHubList = RAUtils.ProcessPlayerIdOrNamesList(arguments, 0, out _);
+
             if (referenceHubList.Count == 0)
             {
                 response = "Invalid player name.";
@@ -82,17 +83,20 @@ internal class Vote : ICommand, IUsageProvider
 
             colorHex = targetColorHex;
         }
-        
+
         LogManager.Debug(colorHex);
-        
-        var valueColor = (from playerColor in Plugin.Instance.PlayerColors where playerColor.Value.Equals(colorHex, StringComparison.OrdinalIgnoreCase) select playerColor.Key).FirstOrDefault();
+
+        var valueColor =
+            (from playerColor in Plugin.Instance.PlayerColors
+                where playerColor.Value.Equals(colorHex, StringComparison.OrdinalIgnoreCase)
+                select playerColor.Key).FirstOrDefault();
 
         if (valueColor == 0)
         {
             response = "The player with that color was not found.";
             return false;
         }
-        
+
         var votedPlayer = Player.Get(valueColor);
         if (votedPlayer == null)
         {
@@ -105,7 +109,7 @@ internal class Vote : ICommand, IUsageProvider
             response = "You cannot vote for a dead player.";
             return false;
         }
-        
+
         if (votedPlayer == player)
         {
             response = "You cannot vote for yourself.";

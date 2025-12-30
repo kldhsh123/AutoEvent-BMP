@@ -1,4 +1,5 @@
 # Halloween Season Mini-Games
+
 # Currently this readme is outdated. It will be updated soon.
 
 ### Zombie Infection.

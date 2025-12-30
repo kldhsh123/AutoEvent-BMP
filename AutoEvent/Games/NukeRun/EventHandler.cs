@@ -1,5 +1,4 @@
-﻿using AutoEvent.API;
-using LabApi.Events.Arguments.PlayerEvents;
+﻿using LabApi.Events.Arguments.PlayerEvents;
 using LabApi.Events.Arguments.Scp173Events;
 using LabApi.Events.Arguments.ServerEvents;
 using PlayerRoles;

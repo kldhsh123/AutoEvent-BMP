@@ -257,8 +257,11 @@ public class Plugin : Event<Config, Translation>, IEventMap, IEventSound
             {
                 text = Translation.TerroristWin;
                 Extensions.PlayAudio("TWin.ogg");
-            } else 
+            }
+            else
+            {
                 text = Translation.Draw;
+            }
         }
         else
         {

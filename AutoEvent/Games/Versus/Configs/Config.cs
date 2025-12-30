@@ -29,7 +29,7 @@ public class Config : EventConfig
 
     [Description("Number of rounds each player plays. Set to 0 for infinite rounds.")]
     public int JailbirdLifespan { get; set; } = 0;
-    
+
     [Description("How long to wait before forcefully selecting a random player. Set to -1 to disable.")]
     public int AutoSelectDelayInSeconds { get; set; } = 10;
 

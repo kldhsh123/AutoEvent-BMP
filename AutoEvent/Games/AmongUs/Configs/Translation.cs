@@ -16,7 +16,8 @@ public class Translation : EventTranslation
     public string KillCooldown { get; set; } = "You can't kill for another {time} seconds!";
 
     public string VotingInfo { get; set; } =
-        "{reason}\nYou can vote by writing .vote <color/name/skip> to the Console which you can open with ~ by default.\n{time} seconds remaining.";    
+        "{reason}\nYou can vote by writing .vote <color/name/skip> to the Console which you can open with ~ by default.\n{time} seconds remaining.";
+
     public string DiscussionInfo { get; set; } =
         "{reason}\nDiscussion time! You can't chat with other players.\n{time} seconds remaining, soon you will can speak and vote.";
 
@@ -24,8 +25,10 @@ public class Translation : EventTranslation
     public string DeathBodyReported { get; set; } = "{deadPlayer}'s body found by {reportedPlayer}!";
     public string EmergencyMeetingsReached { get; set; } = "You can't call any more emergency meetings!";
     public string MeetingCooldown { get; set; } = "You can't call a meeting for another {time} seconds!";
-    public string CannotCallMeetingDuringSabotage { get; set; } = "You cannot call an emergency meeting during this sabotage!";
-    
+
+    public string CannotCallMeetingDuringSabotage { get; set; } =
+        "You cannot call an emergency meeting during this sabotage!";
+
     public string CalibrateDistributor { get; set; } = "Calibrate Distributor";
     public string ChartCourse { get; set; } = "Chart Course";
     public string CleanO2Filter { get; set; } = "Clean O2 Filter";

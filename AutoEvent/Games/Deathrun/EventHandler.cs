@@ -10,7 +10,7 @@ public abstract class EventHandler
     {
         if (ev.DamageHandler is ExplosionDamageHandler explosionDamageHandler) explosionDamageHandler.Damage = 0;
     }
-    
+
     public static void OnPlayerInteractedToy(PlayerInteractedToyEventArgs ev)
     {
         LogManager.Debug("[Deathrun] click to button");

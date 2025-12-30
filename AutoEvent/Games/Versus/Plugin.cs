@@ -20,9 +20,9 @@ public class Plugin : Event<Config, Translation>, IEventSound, IEventMap
     private List<GameObject> _teleports;
     private List<GameObject> _triggers;
     internal Player ClassD;
+    internal int ClassDLifespan;
     internal Player Scientist;
     internal int ScientistLifespan;
-    internal int ClassDLifespan;
     public override string Name { get; set; } = "Cock Fights";
     public override string Description { get; set; } = "Duel of players on the 35hp map from cs 1.6";
     public override string Author { get; set; } = "RisottoMan/code & xleb.ik/map";
@@ -130,18 +130,24 @@ public class Plugin : Event<Config, Translation>, IEventSound, IEventMap
 
         var text = string.Empty;
         if (ClassD is null && Scientist is null)
+        {
             text = Translation.PlayersNull;
+        }
         else if (ClassD is null)
+        {
             text = Translation.ClassDNull.Replace("{scientist}", Scientist.Nickname);
+        }
         else if (Scientist is null)
+        {
             text = Translation.ScientistNull.Replace("{classd}", ClassD.Nickname);
+        }
         else
         {
             if (Scientist.Items.All(item => item.Type != ItemType.Jailbird))
                 Scientist.CurrentItem ??= Scientist.AddItem(ItemType.Jailbird);
             if (ClassD.Items.All(item => item.Type == ItemType.Jailbird))
                 ClassD.CurrentItem ??= ClassD.AddItem(ItemType.Jailbird);
-            
+
             text = Translation.PlayersDuel.Replace("{scientist}", Scientist.Nickname)
                 .Replace("{classd}", ClassD.Nickname);
         }

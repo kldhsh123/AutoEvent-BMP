@@ -32,7 +32,7 @@
 
 ##### A small closed map with a lot of spawns on it, so the gameplay is cheerful.
 
-![](https://github.com/MedveMarci/AutoEvent/blob/main/Photos/Deathmatch.png)    
+![](https://github.com/MedveMarci/AutoEvent/blob/main/Photos/Deathmatch.png)
 
 ### Deathrun [deathrun]
 
@@ -154,7 +154,6 @@
 
 ![](https://github.com/MedveMarci/AutoEvent/blob/main/Photos/RedGreenLight.png)
 
-
 ### Spleef [spleef]
 
 ##### Shoot at the platforms and don't fall into the void.
@@ -168,7 +167,6 @@
 ##### There are a lot of secret positions on the map where you need to survive against zombies.
 
 ![](https://github.com/MedveMarci/AutoEvent/blob/main/Photos/Survival1.png)
-
 
 ### Hide And Seek [hns]
 

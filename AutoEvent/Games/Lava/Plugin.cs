@@ -12,12 +12,12 @@ namespace AutoEvent.Games.Lava;
 
 public class Plugin : Event<Config, Translation>, IEventSound, IEventMap
 {
+    internal EventHandler _eventHandler;
     private GameObject _lava;
     public override string Name { get; set; } = "The floor is LAVA";
     public override string Description { get; set; } = "Survival, in which you need to avoid lava and shoot at others";
     public override string Author { get; set; } = "RisottoMan";
     public override string CommandName { get; set; } = "lava";
-    internal EventHandler _eventHandler;
     protected override FriendlyFireSettings ForceEnableFriendlyFire { get; set; } = FriendlyFireSettings.Enable;
 
     public override EventFlags EventHandlerSettings { get; set; } = EventFlags.IgnoreRagdoll |

@@ -16,7 +16,7 @@ public class Sabotage
     internal float Timer { get; set; }
     internal bool EnabledMeetings { get; init; }
     internal bool IsCritical { get; init; }
-    
+
     internal bool TryActivate(Player player, Plugin plugin, out string reason)
     {
         if ((DateTime.UtcNow - plugin.LastActivated).TotalSeconds < plugin.Config.SabotageCooldown)
@@ -25,6 +25,7 @@ public class Sabotage
             reason = "Sabotage is on cooldown.";
             return false;
         }
+
         if (plugin.CurrentSabotage != null)
         {
             LogManager.Debug("A sabotage is already active, ignoring new sabotage activation.");
@@ -37,12 +38,9 @@ public class Sabotage
         if (IsCritical)
         {
             Timer = Duration;
-            foreach (var light in plugin.LightToys)
-            {
-                light.SetColor(light.NetworkLightColor, Color.red);
-            }
+            foreach (var light in plugin.LightToys) light.SetColor(light.NetworkLightColor, Color.red);
         }
-        
+
         plugin.CurrentSabotage = this;
         switch (Type)
         {
@@ -51,10 +49,7 @@ public class Sabotage
             case SabotageType.ReactorMeltdown:
                 break;
             case SabotageType.FixLights:
-                foreach (var crewmate in plugin.Crewmates)
-                {
-                    crewmate.GetEffect<FogControl>()!.Intensity = 5;
-                }
+                foreach (var crewmate in plugin.Crewmates) crewmate.GetEffect<FogControl>()!.Intensity = 5;
                 break;
             case SabotageType.DoorLockdown:
                 foreach (var door in plugin.DoorList)
@@ -63,30 +58,29 @@ public class Sabotage
                     animator.Play("Door_Close");
                     Timing.CallDelayed(10f, () =>
                     {
-                        animator.Play("Door_Open"); 
+                        animator.Play("Door_Open");
                         Deactivate(plugin);
                     });
                 }
+
                 break;
             case SabotageType.CommsSabotage:
             case SabotageType.None:
             default:
                 break;
         }
+
         reason = null;
         return true;
     }
-    
+
     internal void Deactivate(Plugin plugin)
     {
         LogManager.Debug($"Sabotage deactivated: {Name}");
         if (IsCritical)
-        {
             foreach (var light in plugin.LightToys)
-            {
                 light.SetColor(light.NetworkLightColor, Color.white);
-            }
-        }
+
         plugin.CurrentSabotage = null;
     }
 }
