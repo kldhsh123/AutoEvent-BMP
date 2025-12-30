@@ -76,6 +76,9 @@
         <Content Include="..\Docs\*" Link="Docs\*"/>
         <Content Include="..\Docs\Translations\*" Link="Docs\Translations\*"/>
         <Content Include="..\README.md" Link="README.md"/>
+        <Content Update="..\Docs\HalloweenMiniGames.md">
+          <Link>Docs\HalloweenMiniGames.md</Link>
+        </Content>
     </ItemGroup>
     <ItemGroup>
         <EmbeddedResource Include="Translations\chinese.yml">
