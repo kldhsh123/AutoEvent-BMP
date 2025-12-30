@@ -36,8 +36,8 @@
         <Deterministic>true</Deterministic>
         <LangVersion>default</LangVersion>
         <TargetFrameworkProfile/>
-        <DebugSymbols>true</DebugSymbols>
-        <DebugType>embedded</DebugType>
+        <DebugSymbols>false</DebugSymbols>
+        <DebugType>pdbonly</DebugType>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Lib.Harmony" Version="2.4.2"/>
