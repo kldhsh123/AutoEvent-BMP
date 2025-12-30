@@ -89,7 +89,7 @@ public class Plugin : Event<Config, Translation>, IEventSound, IEventMap
     protected override void OnFinished()
     {
         foreach (var player in Player.ReadyList)
-            if (Vector3.Distance(player.Position, _finish.transform.position) > 10)
+            if (Vector3.Distance(player.Position, _finish.transform.position) > 5)
                 player.Kill(Translation.Died);
 
         string text;
