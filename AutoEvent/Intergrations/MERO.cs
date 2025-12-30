@@ -11,7 +11,7 @@ internal static class Mero
 
     private static Type OptimizerType => Assembly?.GetType("MEROptimizer.Application.MEROptimizer");
 
-    public static bool Available => OptimizerType is not null;
+    private static bool Available => OptimizerType is not null;
 
     internal static void TrySetIsDynamiclyDisabled(bool value)
     {

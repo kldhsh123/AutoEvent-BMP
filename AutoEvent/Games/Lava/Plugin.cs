@@ -12,6 +12,7 @@ namespace AutoEvent.Games.Lava;
 
 public class Plugin : Event<Config, Translation>, IEventSound, IEventMap
 {
+    internal EventHandler _eventHandler;
     private GameObject _lava;
     public override string Name { get; set; } = "The floor is LAVA";
     public override string Description { get; set; } = "Survival, in which you need to avoid lava and shoot at others";
@@ -23,7 +24,6 @@ public class Plugin : Event<Config, Translation>, IEventSound, IEventMap
                                                                     EventFlags.IgnoreHandcuffing |
                                                                     EventFlags.IgnoreBulletHole |
                                                                     EventFlags.IgnoreBloodDecal;
-
 
     public MapInfo MapInfo { get; set; } = new()
     {
@@ -39,14 +39,16 @@ public class Plugin : Event<Config, Translation>, IEventSound, IEventMap
 
     protected override void RegisterEvents()
     {
+        _eventHandler = new EventHandler(this);
         PlayerEvents.Hurting += EventHandler.OnHurting;
-        PlayerEvents.PickedUpItem += EventHandler.OnPickedUpItem;
+        PlayerEvents.PickedUpItem += _eventHandler.OnPickedUpItem;
     }
 
     protected override void UnregisterEvents()
     {
         PlayerEvents.Hurting -= EventHandler.OnHurting;
-        PlayerEvents.PickedUpItem -= EventHandler.OnPickedUpItem;
+        PlayerEvents.PickedUpItem -= _eventHandler.OnPickedUpItem;
+        _eventHandler = null;
     }
 
     protected override void OnStart()

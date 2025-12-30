@@ -66,13 +66,13 @@ public class Plugin : Event<Config, Translation>, IEventMap, IEventSound
     protected override void UnregisterEvents()
     {
         PlayerEvents.SearchedToy -= _eventHandler.OnSearchedToy;
+        PlayerEvents.SearchingToy -= EventHandler.OnSearchingToy;
+        PlayerEvents.SearchToyAborted -= EventHandler.OnSearchToyAborted;
         PlayerEvents.UsingItem -= EventHandler.OnUsingItem;
         PlayerEvents.UsedItem -= _eventHandler.OnUsedItem;
         PlayerEvents.PickingUpItem -= _eventHandler.OnPickingUpItem;
-        PlayerEvents.CancelledUsingItem -= EventHandler.OnCancelledUsingItem;
         PlayerEvents.ChangedItem -= _eventHandler.OnChangedItemEvent;
-        PlayerEvents.SearchingToy += EventHandler.OnSearchingToy;
-        PlayerEvents.SearchToyAborted += EventHandler.OnSearchToyAborted;
+        PlayerEvents.CancelledUsingItem -= EventHandler.OnCancelledUsingItem;
         PlayerEvents.DroppedItem -= _eventHandler.OnDroppedItem;
         PlayerEvents.SearchingPickup -= EventHandler.OnSearchingPickup;
         PlayerEvents.Cuffing -= EventHandler.OnCuffing;
@@ -164,9 +164,9 @@ public class Plugin : Event<Config, Translation>, IEventMap, IEventSound
         var ctCount = Player.ReadyList.Count(r => r.IsNTF);
         var tCount = Player.ReadyList.Count(r => r.IsChaos);
 
-        return !((tCount > 0 || BombState == BombState.Planted) &&
+        return !(RoundTime.TotalSeconds > 0 &&
                  ctCount > 0 &&
-                 RoundTime.TotalSeconds != 0);
+                 (tCount > 0 || BombState == BombState.Planted));
     }
 
     protected override void ProcessFrame()
@@ -253,7 +253,15 @@ public class Plugin : Event<Config, Translation>, IEventMap, IEventSound
         }
         else if (ctCount == 0 && tCount == 0)
         {
-            text = Translation.Draw;
+            if (BombState == BombState.Planted)
+            {
+                text = Translation.TerroristWin;
+                Extensions.PlayAudio("TWin.ogg");
+            }
+            else
+            {
+                text = Translation.Draw;
+            }
         }
         else
         {

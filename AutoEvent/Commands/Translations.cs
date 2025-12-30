@@ -61,14 +61,6 @@ public class Translations : ICommand, IUsageProvider
             try
             {
                 var language = arguments.At(1).ToLower();
-                /*
-                if (language == "english" || language == "default")
-                {
-                    ConfigManager.GenerateDefaultTranslations();
-                    response = "Default translation loaded!\n" +
-                               "Server restart is required to apply changes.";
-                    return true;
-                }*/
 
                 if (!ConfigManager.LanguageByCountryCodeDictionary.ContainsValue(language))
                 {
@@ -81,8 +73,7 @@ public class Translations : ICommand, IUsageProvider
 
                 _ = ConfigManager.LoadTranslationFromAssembly(countryCode);
                 ConfigManager.LoadTranslations();
-                response = "Translation loaded!\n" +
-                           "Server restart is required to apply changes.";
+                response = "Translation loaded!";
                 return true;
             }
             catch (Exception e)
@@ -95,7 +86,7 @@ public class Translations : ICommand, IUsageProvider
         syntax:
         response = "Translations management:\n" +
                    "ev language list - list all available plugin localisations\n" +
-                   "ev language load [language] - set language (restart will be required)\n";
+                   "ev language load [language] - set language\n";
         return true;
     }
 

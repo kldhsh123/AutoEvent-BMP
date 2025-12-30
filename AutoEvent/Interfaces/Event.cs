@@ -22,6 +22,11 @@ namespace AutoEvent.Interfaces
         public abstract string Name { get; set; }
 
         /// <summary>
+        ///     The translated name of the event.
+        /// </summary>
+        internal string InternalName { get; set; }
+
+        /// <summary>
         ///     The Id of the event. It is set by AutoEvent.
         /// </summary>
         public int Id { get; internal set; }
@@ -202,6 +207,7 @@ namespace AutoEvent.Interfaces
         /// </summary>
         public Event()
         {
+            InternalName = Name;
         }
 
         /// <summary>

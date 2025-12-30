@@ -13,7 +13,7 @@ Airstrike Party:
     <color=#ffc0cb>{time}</color>
   all_die: |-
     <color=red>Schiva le bombe</color>
-    <color=yellow>Nessuno è sopravvissuto.(((</color>
+    <color=yellow>Nessuno è sopravvissuto. :(((</color>
     <color=#ffc0cb>{time}</color>
   name: 'Festa dell''attacco aereo'
   description: 'Sopravvivi al bombardamento.'
@@ -23,6 +23,9 @@ All Deathmatch:
     <size=30><i><b>{name}</b>
     <color=red>Tu - {kills}/{needKills} kills</color>
     Round Time: {time}</i></size>
+  hint_cycle: <color=#ff0000>You - {kills}/{needKills} kills</color></size>
+  leaderboard: Leaderboard
+  leaderboard_content: <color={color}>{num}. {playerName} / {kills} kills</color>
   no_players: |-
     <color=red>Il game è stato fermato da un admin
     Le tue kills {count}</color>
@@ -36,7 +39,56 @@ All Deathmatch:
   name: 'Tutti contro tutti'
   description: 'Combatti in un deathmatch tutti contro tutti.'
   command_name: 'dm'
-Atomic Escape:
+Among Us:
+  starting_event: |-
+    <b>{name}</b>
+    There are {time} seconds before the game starts. Selecting the <color=red><b>Impostors</b></color>.
+  you_are_impostor: 'You are the <color=red>Impostor</color>!'
+  you_are_crewmate: 'You are a <color=#00FFFF>Crewmate</color>!'
+  impostor_win: '<color=red>Impostors</color> have won!'
+  crewmate_win: '<color=#00FFFF>Crewmates</color> have won!'
+  killed_by_impostor: 'You were killed by an Impostor!'
+  kill_cooldown: 'You can''t kill for another {time} seconds!'
+  too_far: 'You are too far away to kill!'
+  voting_info: |-
+    {reason}
+    You can vote by writing .vote <color/name/skip> to the Console which you can open with ~ by default.
+    {time} seconds remaining.
+  discussion_info: |-
+    {reason}
+    Discussion time! You can't chat with other players.
+    {time} seconds remaining, soon you will can speak and vote.
+  meeting_called: 'A meeting has been called by {player}!'
+  death_body_reported: '<color=red>{deadPlayer}</color>''s body found by <color=yellow>{reportedPlayer}</color>!'
+  emergency_meetings_reached: 'You can''t call any more emergency meetings!'
+  meeting_cooldown: 'You can''t call a meeting for another {time} seconds!'
+  calibrate_distributor: 'Calibrate Distributor'
+  chart_course: 'Chart Course'
+  clean_o2_filter: 'Clean O2 Filter'
+  empty_chute: 'Empty Chute'
+  prime_shields: 'Prime Shields'
+  start_reactor: 'Start Reactor'
+  submit_scan: 'Submit Scan'
+  fix_wiring: 'Fix Wiring'
+  align_engine_output: 'Align Engine Output'
+  divert_power_to: 'Divert Power to {roomName}'
+  accept_divert_power: 'Accept Divert Power'
+  download_data: 'Download Data'
+  upload_data: 'Upload Data'
+  no_votes: 'No votes'
+  vote: 'vote'
+  no_one_voted_out: 'No one was voted out.'
+  its_a_tie: 'It''s a tie!'
+  death_message: 'Voted out.'
+  voted_out: '{player} was voted out.'
+  tasks: 'Tasks'
+  didnt_vote: 'Didn''t vote'
+  was_an_impostor: '{player} was an Impostor.'
+  was_not_an_impostor: '{player} was not an Impostor.'
+  name: 'Among Us'
+  description: 'The Impostor is among us.'
+  command_name: 'amongus'
+Nuke Run:
   before_start: |-
     {name}
     Preparati a fuggire dalla struttura prima che esploda!
@@ -48,7 +100,7 @@ Atomic Escape:
     {name}
     <color=red>{players} Player Fuggiti </color>
   name: 'Fuga atomica'
-  description: 'Fuggi dalla struttura come SCP-173 a velocità supersonica!'
+  description: 'Escape the facility before it explodes!'
   command_name: 'escape'
 Battle:
   time_left: '<size=100><color=red>La battaglia inizia in {time} </color></size>'
@@ -86,6 +138,7 @@ Cock Fights:
   scientist_win: |-
     <color=#D71868><b><i>{name}</i></b></color>
     <color=yellow>VINCITORI: <color=red>SCIENZIATI</color></color>
+  max_round_reached: 'You reached the max number of rounds!'
   name: 'Combattimenti di galli'
   description: 'Duello tra player con 35hp nella mappa di cs 1.6'
   command_name: 'versus'
@@ -443,6 +496,7 @@ The floor is LAVA:
     Player - {winner}</b></color>
   all_dead: '<color=red><b>Nessuno è sopravvissuto.</b></color>'
   died: '<color=red>Bruciato nella lava</color>'
+  reload: 'Reload your weapon!'
   name: 'Il pavimento è lava'
   description: 'Sopravvivenza, in cui devi evitare la lava e sparare agli altri'
   command_name: 'lava'

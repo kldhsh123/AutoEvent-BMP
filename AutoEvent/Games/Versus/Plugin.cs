@@ -20,7 +20,9 @@ public class Plugin : Event<Config, Translation>, IEventSound, IEventMap
     private List<GameObject> _teleports;
     private List<GameObject> _triggers;
     internal Player ClassD;
+    internal int ClassDLifespan;
     internal Player Scientist;
+    internal int ScientistLifespan;
     public override string Name { get; set; } = "Cock Fights";
     public override string Description { get; set; } = "Duel of players on the 35hp map from cs 1.6";
     public override string Author { get; set; } = "RisottoMan/code & xleb.ik/map";
@@ -60,6 +62,8 @@ public class Plugin : Event<Config, Translation>, IEventSound, IEventMap
     {
         Scientist = null;
         ClassD = null;
+        ScientistLifespan = 0;
+        ClassDLifespan = 0;
         _eventState = 0;
         _triggers = [];
         _teleports = [];
@@ -92,8 +96,6 @@ public class Plugin : Event<Config, Translation>, IEventSound, IEventMap
             }
 
             count++;
-
-            player.CurrentItem ??= player.AddItem(ItemType.Jailbird);
         }
     }
 
@@ -128,14 +130,27 @@ public class Plugin : Event<Config, Translation>, IEventSound, IEventMap
 
         var text = string.Empty;
         if (ClassD is null && Scientist is null)
+        {
             text = Translation.PlayersNull;
+        }
         else if (ClassD is null)
+        {
             text = Translation.ClassDNull.Replace("{scientist}", Scientist.Nickname);
+        }
         else if (Scientist is null)
+        {
             text = Translation.ScientistNull.Replace("{classd}", ClassD.Nickname);
+        }
         else
+        {
+            if (Scientist.Items.All(item => item.Type != ItemType.Jailbird))
+                Scientist.CurrentItem ??= Scientist.AddItem(ItemType.Jailbird);
+            if (ClassD.Items.All(item => item.Type == ItemType.Jailbird))
+                ClassD.CurrentItem ??= ClassD.AddItem(ItemType.Jailbird);
+
             text = Translation.PlayersDuel.Replace("{scientist}", Scientist.Nickname)
                 .Replace("{classd}", ClassD.Nickname);
+        }
 
         Extensions.ServerBroadcast(text.Replace("{name}", Name).Replace("{remain}", $"{_countdown.TotalSeconds}"), 1);
     }
@@ -149,8 +164,7 @@ public class Plugin : Event<Config, Translation>, IEventSound, IEventMap
 
         if (Scientist is null)
         {
-            if (ClassD is not null)
-                ClassD.Heal(100);
+            ClassD?.Heal(100);
 
             _eventState = EventState.ChooseScientist;
             return;
@@ -158,8 +172,7 @@ public class Plugin : Event<Config, Translation>, IEventSound, IEventMap
 
         if (ClassD is null)
         {
-            if (Scientist is not null)
-                Scientist.Heal(100);
+            Scientist?.Heal(100);
 
             _eventState = EventState.ChooseClassD;
             return;
@@ -202,6 +215,11 @@ public class Plugin : Event<Config, Translation>, IEventSound, IEventMap
 
         End:
         chosenPlayer.Position = _teleports.ElementAt(value).transform.position;
+        if (Scientist is not null)
+            Scientist.Position = _teleports.ElementAt(0).transform.position;
+        if (ClassD is not null)
+            ClassD.Position = _teleports.ElementAt(1).transform.position;
+        chosenPlayer.Heal(100);
         _eventState = EventState.Waiting;
         return chosenPlayer;
     }

@@ -20,6 +20,7 @@ public static class ConfigManager
     internal static Dictionary<string, string> LanguageByCountryCodeDictionary { get; } = new()
     {
         ["EN"] = "english",
+        ["HU"] = "hungarian",
         ["CN"] = "chinese",
         ["FR"] = "french",
         ["DE"] = "german",
@@ -43,43 +44,50 @@ public static class ConfigManager
         LoadTranslations();
     }
 
-    internal static void LoadConfigs()
+    private static void LoadConfigs()
     {
         try
         {
-            var configs = new Dictionary<string, object>();
+            Dictionary<string, object> configs;
 
             if (!File.Exists(ConfigPath))
             {
-                foreach (var ev in AutoEvent.EventManager.Events.OrderBy(r => r.Name))
-                    configs.Add(ev.Name, ev.InternalConfig);
-                // Save the config file
+                configs = new Dictionary<string, object>();
+                foreach (var ev in AutoEvent.EventManager.Events.OrderBy(r => r.InternalName))
+                    configs[ev.InternalName] = ev.InternalConfig;
                 File.WriteAllText(ConfigPath, YamlConfigParser.Serializer.Serialize(configs));
-            }
-            else
-            {
-                configs =
-                    YamlConfigParser.Deserializer.Deserialize<Dictionary<string, object>>(File.ReadAllText(ConfigPath));
+                return;
             }
 
-            // Move translations to each mini-games
+            configs =
+                YamlConfigParser.Deserializer.Deserialize<Dictionary<string, object>>(
+                    File.ReadAllText(ConfigPath));
+
             foreach (var ev in AutoEvent.EventManager.Events)
             {
                 if (configs is null)
                     continue;
 
-                if (!configs.TryGetValue(ev.Name, out var rawDeserializedConfig))
+                if (!configs.TryGetValue(ev.InternalName, out var rawDeserializedConfig))
                 {
-                    LogManager.Warn($"[ConfigManager] {ev.Name} doesn't have configs");
+                    LogManager.Warn($"[ConfigManager] {ev.InternalName} doesn't have configs");
                     continue;
                 }
 
-                var translation = (EventConfig)YamlConfigParser.Deserializer.Deserialize(
-                    YamlConfigParser.Serializer.Serialize(rawDeserializedConfig), ev.InternalConfig.GetType());
-                ev.InternalConfig.CopyProperties(translation);
+                var loadedConfig = (EventConfig)YamlConfigParser.Deserializer.Deserialize(
+                    YamlConfigParser.Serializer.Serialize(rawDeserializedConfig),
+                    ev.InternalConfig.GetType());
+
+                ev.InternalConfig.CopyProperties(loadedConfig);
             }
 
-            LogManager.Info("[ConfigManager] The configs of the mini-games are loaded.");
+            var updatedConfigs = new Dictionary<string, object>();
+            foreach (var ev in AutoEvent.EventManager.Events.OrderBy(r => r.InternalName))
+                updatedConfigs[ev.InternalName] = ev.InternalConfig;
+
+            File.WriteAllText(ConfigPath, YamlConfigParser.Serializer.Serialize(updatedConfigs));
+
+            LogManager.Info("[ConfigManager] The configs of the mini-games are loaded and updated.");
         }
         catch (Exception ex)
         {
@@ -87,23 +95,21 @@ public static class ConfigManager
         }
     }
 
+
     internal static void LoadTranslations()
     {
         try
         {
-            var translations = new Dictionary<string, object>();
+            Dictionary<string, object> translations;
 
-            // If the translation file is not found, then create a new one.
             if (!File.Exists(TranslationPath))
             {
                 var countryCode = "EN";
                 try
                 {
-                    using (var client = new WebClient())
-                    {
-                        var url = $"http://ipinfo.io/{Server.IpAddress}/country";
-                        countryCode = client.DownloadString(url).Trim();
-                    }
+                    using var client = new WebClient();
+                    var url = $"http://ipinfo.io/{Server.IpAddress}/country";
+                    countryCode = client.DownloadString(url).Trim();
                 }
                 catch (WebException)
                 {
@@ -123,14 +129,11 @@ public static class ConfigManager
             }
 
             // Move translations to each mini-games
-            foreach (var ev in AutoEvent.EventManager.Events)
+            foreach (var ev in AutoEvent.EventManager.Events.Where(_ => translations is not null))
             {
-                if (translations is null)
-                    continue;
-
-                if (!translations.TryGetValue(ev.Name, out var rawDeserializedTranslation))
+                if (!translations.TryGetValue(ev.InternalName, out var rawDeserializedTranslation))
                 {
-                    LogManager.Warn($"[ConfigManager] {ev.Name} doesn't have translations");
+                    LogManager.Warn($"[ConfigManager] {ev.InternalName} doesn't have translations");
                     continue;
                 }
 
@@ -139,7 +142,7 @@ public static class ConfigManager
                     ev.InternalTranslation.GetType());
                 if (obj is not EventTranslation translation)
                 {
-                    LogManager.Warn($"[ConfigManager] {ev.Name} malformed translation.");
+                    LogManager.Warn($"[ConfigManager] {ev.InternalName} malformed translation.");
                     continue;
                 }
 
@@ -160,16 +163,14 @@ public static class ConfigManager
 
     internal static Dictionary<string, object> LoadTranslationFromAssembly(string countryCode)
     {
-        Dictionary<string, object> translations;
-
         // Try to get a translation from an assembly
-        if (!TryGetTranslationFromAssembly(countryCode, TranslationPath, out translations))
+        if (!TryGetTranslationFromAssembly(countryCode, TranslationPath, out Dictionary<string, object> translations))
             translations = GenerateDefaultTranslations();
 
         return translations;
     }
 
-    internal static Dictionary<string, object> GenerateDefaultTranslations()
+    private static Dictionary<string, object> GenerateDefaultTranslations()
     {
         // Otherwise, create default translations from all mini-games.
         var translations = new Dictionary<string, object>();
@@ -201,25 +202,21 @@ public static class ConfigManager
         try
         {
             var assembly = Assembly.GetExecutingAssembly();
-            using (var stream = assembly.GetManifestResourceStream(resourceName))
+            using var stream = assembly.GetManifestResourceStream(resourceName);
+            if (stream == null)
             {
-                if (stream == null)
-                {
-                    LogManager.Warn($"[ConfigManager] The language '{language}' was not found in the assembly.");
-                    translationFile = default;
-                    return false;
-                }
-
-                using (var reader = new StreamReader(stream))
-                {
-                    var yaml = reader.ReadToEnd();
-                    translationFile = YamlConfigParser.Deserializer.Deserialize<T>(yaml);
-
-                    // Save the translation file
-                    File.WriteAllText(path, yaml);
-                    return true;
-                }
+                LogManager.Warn($"[ConfigManager] The language '{language}' was not found in the assembly.");
+                translationFile = default;
+                return false;
             }
+
+            using var reader = new StreamReader(stream);
+            var yaml = reader.ReadToEnd();
+            translationFile = YamlConfigParser.Deserializer.Deserialize<T>(yaml);
+
+            // Save the translation file
+            File.WriteAllText(path, yaml);
+            return true;
         }
         catch (Exception ex)
         {
@@ -230,7 +227,7 @@ public static class ConfigManager
         return false;
     }
 
-    public static void CopyProperties(this object target, object source)
+    private static void CopyProperties(this object target, object source)
     {
         var type = target.GetType();
         if (type != source.GetType())

@@ -1,5 +1,7 @@
 # Winter Season Mini-Games
 
+# Currently this readme is outdated. It will be updated soon.
+
 ### Zombie Infection.
 
 #### Zombie infestation. the goal of which is to infect all players.

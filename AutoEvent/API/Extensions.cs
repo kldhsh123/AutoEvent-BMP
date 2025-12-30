@@ -80,7 +80,7 @@ public static class Extensions
 
         loadout = loadouts[loadouts.Count - 1];
         assignLoadout:
-        GiveLoadout(player, loadout, flags);
+        player.GiveLoadout(loadout, flags);
     }
 
     public static void GiveLoadout(this Player player, Loadout loadout, LoadoutFlags flags = LoadoutFlags.None)
@@ -204,7 +204,7 @@ public static class Extensions
             return false;
         }
 
-        response = $"You need to download the 'ProjectMER' to run this mini-game.\n" +
+        response = $"You need to download 'ProjectMER' to run this mini-game.\n" +
                    $"Read the installation instruction in the github.";
         return false;
     }
@@ -219,7 +219,8 @@ public static class Extensions
             AutoEvent.EventManager.CurrentEvent.StopEvent();
 
             foreach (var pl in Player.ReadyList) pl.SetRole(RoleTypeId.Spectator);
-            LogManager.Error($"The map {serializableSchematic.SchematicName} could not be loaded. Delete and re-download the schematics.");
+            LogManager.Error(
+                $"The schematic {serializableSchematic.SchematicName} could not be loaded. Delete and re-download the schematics.");
             return null;
         }
 
@@ -334,6 +335,12 @@ public static class Extensions
         {
             var filePath = Path.Combine(AutoEvent.Singleton.Config.MusicDirectoryPath, fileName);
             LogManager.Debug($"[PlayAudio] File path: {filePath}");
+            if (!File.Exists(filePath))
+            {
+                LogManager.Debug($"[PlayAudio] The music file {fileName} does not exist at path {filePath}");
+                return null;
+            }
+
             if (!AudioClipStorage.LoadClip(filePath, fileName))
             {
                 LogManager.Debug($"[PlayAudio] The music file {fileName} was not found for playback");
@@ -356,28 +363,38 @@ public static class Extensions
         return audioPlayer;
     }
 
-    public static void PlayPlayerAudio(this AudioPlayer audioPlayer, Player player, string fileName, byte volume)
+    public static void PlayPlayerAudio(Player player, string fileName, bool isLoop = false)
     {
-        if (audioPlayer is null)
-        {
-            LogManager.Debug("[PlayPlayerAudio] The AudioPlayer is null");
-            return;
-        }
-
-        if (player is null) LogManager.Debug("[PlayPlayerAudio] The player is null");
-
         if (!AudioClipStorage.AudioClips.ContainsKey(fileName))
         {
             var filePath = Path.Combine(AutoEvent.Singleton.Config.MusicDirectoryPath, fileName);
-            LogManager.Debug($"[PlayPlayerAudio] File path: {filePath}");
+            LogManager.Debug($"[PlayAudio] File path: {filePath}");
+            if (!File.Exists(filePath))
+            {
+                LogManager.Debug($"[PlayAudio] The music file {fileName} does not exist at path {filePath}");
+                return;
+            }
+
             if (!AudioClipStorage.LoadClip(filePath, fileName))
             {
-                LogManager.Debug($"[PlayPlayerAudio] The music file {fileName} was not found for playback");
+                LogManager.Debug($"[PlayAudio] The music file {fileName} was not found for playback");
                 return;
             }
         }
 
-        audioPlayer.AddClip(fileName);
+        var audioPlayer = AudioPlayer.CreateOrGet($"AutoEvent-{player.NetworkId}-{fileName}",
+            condition: hub =>
+            {
+                var playerHub = Player.Get(hub);
+                return playerHub.NetworkId == player.NetworkId;
+            },
+            onIntialCreation: p =>
+            {
+                p.AddSpeaker("AutoEvent-Main-{player.NetworkId}-{fileName}", isSpatial: false, maxDistance: 5000f);
+            });
+
+        audioPlayer.AddClip(fileName, loop: isLoop);
+        audioPlayer.DestroyWhenAllClipsPlayed = true;
     }
 
     public static void PauseAudio(this AudioPlayer audioPlayer)
@@ -424,14 +441,14 @@ public static class Extensions
     public static void SetInteractableToy(this InvisibleInteractableToy toy, Player player, float duration)
     {
         if (toy == null || player == null) return;
-        InteractableToys[Key(toy, player.NetworkId)] = duration;
+        InteractableToys[toy.Key(player.NetworkId)] = duration;
     }
 
     public static bool TryGetInteractableToy(this InvisibleInteractableToy toy, ReferenceHub hub, out float duration)
     {
         duration = 0;
         if (toy == null || hub == null) return false;
-        return InteractableToys.TryGetValue(Key(toy, hub.networkIdentity.netId), out duration);
+        return InteractableToys.TryGetValue(toy.Key(hub.networkIdentity.netId), out duration);
     }
 
     public static void ClearInteractableToy(this InvisibleInteractableToy toy)

@@ -2,6 +2,7 @@
 using System.Linq;
 using CedMod;
 using LabApi.Features.Wrappers;
+using PlayerStatsSystem;
 
 namespace AutoEvent.API;
 
@@ -14,7 +15,7 @@ public abstract class FriendlyFireSystem
         FriendlyFireAutoBanDefaultEnabled = IsFriendlyFireEnabledByDefault;
     }
 
-    public static bool CedModIsPresent { get; private set; }
+    private static bool CedModIsPresent { get; set; }
     public static bool IsFriendlyFireEnabledByDefault { get; set; }
     public static bool FriendlyFireAutoBanDefaultEnabled { get; set; }
 
@@ -74,6 +75,7 @@ public abstract class FriendlyFireSystem
         try
         {
             FriendlyFireConfig.PauseDetector = false;
+            AttackerDamageHandler.RefreshConfigs();
 
             if (CedModIsPresent) _cedmodFFEnable();
         }
@@ -90,6 +92,7 @@ public abstract class FriendlyFireSystem
         {
             LogManager.Debug("Disabling Friendly Fire Detector.");
             FriendlyFireConfig.PauseDetector = true;
+            AttackerDamageHandler._ffMultiplier = 1f;
 
             if (CedModIsPresent) _cedmodFFDisable();
         }
@@ -103,7 +106,7 @@ public abstract class FriendlyFireSystem
     public static void EnableFriendlyFire()
     {
         LogManager.Debug("Enabling Friendly Fire.");
-
+        AttackerDamageHandler._ffMultiplier = 1f;
         Server.FriendlyFire = true;
     }
 
@@ -118,5 +121,6 @@ public abstract class FriendlyFireSystem
     {
         LogManager.Debug("Restoring Friendly Fire and Detector.");
         Server.FriendlyFire = IsFriendlyFireEnabledByDefault;
+        AttackerDamageHandler.RefreshConfigs();
     }
 }

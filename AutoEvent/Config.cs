@@ -17,6 +17,10 @@ public class Config
 
     [Description("Enable/Disable Debug.")] public bool Debug { get; set; } = false;
 
+    [Description(
+        "Enable/Disable the CreditTag system. We're working free on the plugins so please don't turn this off, we deserve this! :)")]
+    public bool CreditTagSystem { get; set; } = true;
+
     [Description("The global volume of plugins (0 - 200, 100 is normal)")]
     public float Volume { get; set; } = 100;
 

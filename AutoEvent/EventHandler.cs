@@ -164,7 +164,7 @@ internal class EventHandler : CustomEventsHandler
         try
         {
             var currentVersion = AutoEvent.Singleton.Version;
-            _ = Task.Run(() => AutoEvent.CheckForUpdatesAsync(currentVersion));
+            _ = Task.Run(() => VersionManager.CheckForUpdatesAsync(currentVersion));
         }
         catch (Exception ex)
         {
@@ -179,5 +179,21 @@ internal class EventHandler : CustomEventsHandler
         if (AutoEvent.EventManager.CurrentEvent is null) return;
         AutoEvent.EventManager.CurrentEvent.StopEvent();
         base.OnServerRoundRestarted();
+    }
+
+    public override void OnPlayerJoined(PlayerJoinedEventArgs ev)
+    {
+        if (AutoEvent.Singleton.Config != null && AutoEvent.Singleton.Config.CreditTagSystem)
+        {
+            CreditTag.GetTagsFromGithub();
+            if (CreditTag.TryGetTag(ev.Player.UserId, out var tag, out var color))
+            {
+                ev.Player.ReferenceHub.serverRoles.SetText(tag);
+                ev.Player.ReferenceHub.serverRoles.SetColor(color);
+                LogManager.Debug($"Applied credit tag to player {ev.Player.Nickname} ({ev.Player.UserId}): {tag}");
+            }
+        }
+
+        base.OnPlayerJoined(ev);
     }
 }

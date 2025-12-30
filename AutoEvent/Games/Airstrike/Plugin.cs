@@ -20,14 +20,14 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap, IEventSound
     private CoroutineHandle _grenadeCoroutineHandle;
     public List<GameObject> SpawnList;
     public override string Name { get; set; } = "Airstrike Party";
-    public override string Description { get; set; } = "Survive as aistrikes rain down from above.";
+    public override string Description { get; set; } = "Survive as grenades rain down from above.";
     public override string Author { get; set; } = "RisottoMan";
     public override string CommandName { get; set; } = "airstrike";
     protected override FriendlyFireSettings ForceEnableFriendlyFire { get; set; } = FriendlyFireSettings.Enable;
     public override EventFlags EventHandlerSettings { get; set; } = EventFlags.IgnoreRagdoll;
     protected override FriendlyFireSettings ForceEnableFriendlyFireAutoban { get; set; } = FriendlyFireSettings.Disable;
     private EventHandler EventHandler { get; set; }
-    public int Stage { get; private set; }
+    private int Stage { get; set; }
 
     public MapInfo MapInfo { get; set; } = new()
     {
@@ -156,7 +156,7 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap, IEventSound
             Stage++;
 
             // Defaults: 
-            count += 10; //50,  60,  70,  80, [ignored last round] 1
+            count += 5; //50,  55,  60,  65, [ignored last round] 1
             timing += 0.2f; //0.5, 0.7, 0.9, 1.1, [ignored last round] 5
             height -= 5f; //20,  15,  10,  5,   [ignored last round] 20
             scale += 1; //1, 2, 3, 4   [ignored last round] 75
@@ -184,7 +184,7 @@ public class Plugin : Event<Configs.Config, Translation>, IEventMap, IEventSound
             case > 1:
                 Extensions.ServerBroadcast(
                     Translation.MorePlayer
-                        .Replace("{count}", $"{Player.ReadyList.Count()}")
+                        .Replace("{count}", $"{Player.ReadyList.Count(p => p.IsAlive)}")
                         .Replace("{time}", time), 10);
                 break;
             case 1:

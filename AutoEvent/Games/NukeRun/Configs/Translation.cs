@@ -1,6 +1,6 @@
 ﻿using AutoEvent.Interfaces;
 
-namespace AutoEvent.Games.Escape;
+namespace AutoEvent.Games.NukeRun;
 
 public class Translation : EventTranslation
 {

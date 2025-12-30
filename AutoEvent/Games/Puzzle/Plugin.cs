@@ -7,6 +7,7 @@ using AutoEvent.Interfaces;
 using LabApi.Features.Wrappers;
 using MEC;
 using UnityEngine;
+using LightSourceToy = AdminToys.LightSourceToy;
 using PrimitiveObjectToy = AdminToys.PrimitiveObjectToy;
 using Random = UnityEngine.Random;
 
@@ -164,8 +165,14 @@ public class Plugin : Event<Config, Translation>, IEventSound, IEventMap
                 Random.Range(0f, 1f), Random.Range(0f, 1f), 1f);
 
         foreach (var colorIndicator in _colorIndicators)
-            colorIndicator.GetComponent<PrimitiveObjectToy>().NetworkMaterialColor = new Color(Random.Range(0f, 1f),
+        {
+            var color = new Color(Random.Range(0f, 1f),
                 Random.Range(0f, 1f), Random.Range(0f, 1f), 1f);
+            if (colorIndicator.TryGetComponent<PrimitiveObjectToy>(out var primitive))
+                primitive.NetworkMaterialColor = color;
+            else if (colorIndicator.TryGetComponent<LightSourceToy>(out var labPrimitive))
+                labPrimitive.NetworkLightColor = color;
+        }
 
         if (_countdown.TotalSeconds > 0)
             return;
@@ -177,20 +184,33 @@ public class Plugin : Event<Config, Translation>, IEventSound, IEventMap
                 platform.GetComponent<PrimitiveObjectToy>().NetworkMaterialColor =
                     _fallingPlatforms.Contains(platform) ? Color.magenta : Color.green;
             foreach (var colorIndicator in _colorIndicators)
-                colorIndicator.GetComponent<PrimitiveObjectToy>().NetworkMaterialColor = Color.green;
+                if (colorIndicator.TryGetComponent<PrimitiveObjectToy>(out var primitive))
+                    primitive.NetworkMaterialColor = Color.green;
+                else if (colorIndicator.TryGetComponent<LightSourceToy>(out var labPrimitive))
+                    labPrimitive.NetworkLightColor = Color.green;
         }
 
         else
         {
-            var selectedColor = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f), 1f);
+            var palette = new[]
+            {
+                Color.black, Color.blue, Color.cyan, Color.gray,
+                Color.green, Color.magenta, Color.red, Color.white,
+                Color.yellow
+            };
+
+            var selectedColor = palette[Random.Range(0, palette.Length)];
 
             foreach (var colorIndicator in _colorIndicators)
-                colorIndicator.GetComponent<PrimitiveObjectToy>().NetworkMaterialColor = selectedColor;
+                if (colorIndicator.TryGetComponent<PrimitiveObjectToy>(out var primitive))
+                    primitive.NetworkMaterialColor = selectedColor;
+                else if (colorIndicator.TryGetComponent<LightSourceToy>(out var labPrimitive))
+                    labPrimitive.NetworkLightColor = selectedColor;
 
             foreach (var platform in _platforms)
                 platform.GetComponent<PrimitiveObjectToy>().NetworkMaterialColor =
                     _fallingPlatforms.Contains(platform)
-                        ? new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f), 1f)
+                        ? palette.Where(c => c != selectedColor).OrderBy(c => Random.value).First()
                         : selectedColor;
         }
 
